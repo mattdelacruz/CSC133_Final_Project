@@ -114,7 +114,8 @@ class Game extends Pane implements Updateable {
                     createCloud();
                 }
 
-                if (cloudPane.size() == 3 || cloudPane.size() == 4 && dice == 1) {
+                if (cloudPane.size() == 3 || cloudPane.size() == 4 && 
+                dice == 1) {
                     createCloud();
                 }
             }
@@ -256,17 +257,21 @@ class Game extends Pane implements Updateable {
         double minY = helipad.getBoundsInParent().getMaxY() + CLOUD_SIZE;
 
         Cloud c;
-        if (cloudPane != null) {
-            do {
-                c = new Cloud(new Point2D(
-                        ThreadLocalRandom.current().nextDouble(minX, maxX + 1),
-                        ThreadLocalRandom.current().nextDouble(minY, maxY + 1)), CLOUD_SIZE);
-            } while (checkCloudIntersection(c));
-        } else {
-            c = new Cloud(new Point2D(
+        // if (cloudPane != null) {
+        //     do {
+        //         c = new Cloud(new Point2D(
+        //                 ThreadLocalRandom.current().nextDouble(minX, maxX + 1),
+        //                 ThreadLocalRandom.current().nextDouble(minY, maxY + 1)), CLOUD_SIZE);
+        //     } while (checkCloudIntersection(c));
+        // } else {
+        //     c = new Cloud(new Point2D(
+        //             ThreadLocalRandom.current().nextDouble(minX, maxX + 1),
+        //             ThreadLocalRandom.current().nextDouble(minY, maxY + 1)), CLOUD_SIZE);
+        // }
+
+        c = new Cloud(new Point2D(
                     ThreadLocalRandom.current().nextDouble(minX, maxX + 1),
                     ThreadLocalRandom.current().nextDouble(minY, maxY + 1)), CLOUD_SIZE);
-        }
 
         cloudPane.add(c);
     }
