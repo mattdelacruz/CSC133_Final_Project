@@ -5,7 +5,6 @@ import java.util.concurrent.ThreadLocalRandom;
 
 import javafx.geometry.Point2D;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
 import javafx.scene.transform.Transform;
 
@@ -19,7 +18,7 @@ class Cloud extends GameObject implements Updateable {
     private static final Color FONT_COLOR = Color.BLACK;
     private static final Color DISTANCE_LINE_COLOR = Color.MAGENTA;
 
-    private Circle circle;
+    private BezierOval circle;
     private GameText cloudLabel;
     private Pond min;
     private Line distance;
@@ -28,7 +27,8 @@ class Cloud extends GameObject implements Updateable {
     private double rand = ThreadLocalRandom.current().nextDouble(0.5, 2);
 
     Cloud(Point2D s, double size) {
-        circle = new Circle(s.getX(), s.getY(), size);
+        
+        circle = new BezierOval(new Point2D(s.getX() + rand, s.getY() + rand), size);
         cloudColorValue = 0;
         percentage = cloudColorValue / MAX_COLOR_VALUE;
         percentage *= 100;
@@ -124,7 +124,7 @@ class Cloud extends GameObject implements Updateable {
         state = s;
     }
 
-    public Circle getCloudCircle() {
+    public BezierOval getCloudCircle() {
         return circle;
     }
 
