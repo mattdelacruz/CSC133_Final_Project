@@ -1,16 +1,8 @@
 package com.project.a3;
 
-import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
-
 import javafx.scene.Node;
-
 class Ponds extends GameObjectPane<Pond> implements Iterable<Node> {
-
-    Ponds() {
-    }
-
     public void clear() {
         getChildren().clear();
     }

@@ -1,6 +1,8 @@
 package com.project.a3;
 
 import java.util.Iterator;
+import java.util.concurrent.ThreadLocalRandom;
+
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.paint.Color;
@@ -23,7 +25,7 @@ class Cloud extends GameObject implements Updateable {
     private Line distance;
     private CloudState state = new AliveCloudState();
     private double percentage, cloudColorValue, lengthX;
-    private double rand;
+    private double rand = ThreadLocalRandom.current().nextDouble(0, 5);
 
     Cloud(Point2D s, double size) {
         circle = new BezierOval(new Point2D(s.getX() + rand, s.getY() + rand), size);
@@ -124,11 +126,4 @@ class Cloud extends GameObject implements Updateable {
         state = s;
     }
 
-    public BezierOval getCloudCircle() {
-        return circle;
-    }
-
-    public GameText getCloudLabel() {
-        return cloudLabel;
-    }
 }

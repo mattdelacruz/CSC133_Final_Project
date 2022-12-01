@@ -18,14 +18,12 @@ class Helicopter extends GameObject {
     private HeloBody heloBody;
     private HeloBlade heloBlade;
     private GameText fuelLabel;
-    private Group helicopter;
     private HelicopterState state = new HelicopterOffState();
     private double speed = 0;
     private double spinSpeed = 0;
     private int fuelValue = 0;
 
     Helicopter(Point2D s, Color c, double r, int startFuel) {
-        helicopter = new Group();
         heloBody = new HeloBody(s);
         heloBlade = new HeloBlade(s);
         fuelValue = startFuel;
@@ -36,7 +34,6 @@ class Helicopter extends GameObject {
                         heloBody.getBoundsInParent().getMinY() -
                                 LABEL_GAP),
                 Color.MAGENTA);
-        //helicopter.getChildren().addAll(heloBody, heloBlade, fuelLabel);
         getChildren().addAll(heloBody, heloBlade, fuelLabel);
     }
 
@@ -113,10 +110,6 @@ class Helicopter extends GameObject {
 
     public int getFuel() {
         return fuelValue;
-    }
-
-    public GameObject getHelicopterGroup() {
-        return this;
     }
 
 }

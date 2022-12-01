@@ -30,11 +30,11 @@ public class BezierOval extends Group {
     }
 
     public void move(Translate t) {
-        this.getTransforms().add(t);
+
     }
 
     public void setFill(Paint value) {
-        for (Node s : this.getChildren()) {
+        for (Node s : getChildren()) {
             if (s instanceof Shape) {
                 ((Shape)s).setFill(value);
             }

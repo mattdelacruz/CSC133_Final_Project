@@ -11,7 +11,7 @@ class HelicopterReadyState implements HelicopterState {
 
     @Override
     public void moveHeli(Helicopter heli) {
-        heli.getHelicopterGroup().getTransforms().add(new Translate(0, heli.getSpeed()));
+        heli.getTransforms().add(new Translate(0, heli.getSpeed()));
     }
 
     @Override

@@ -64,14 +64,10 @@ class Game extends Pane implements Updateable {
         AnimationTimer loop = new AnimationTimer() {
             @Override
             public void handle(long now) {
-
                 update();
-
                 checkCloudOutOfBounds();
-                
                 checkNumCloudsOnScreen();
                 decreaseClouds(now);
-
                 resetDistanceLines();
                 updateClosestPond(now);
                 checkIfEndGame();
@@ -129,15 +125,6 @@ class Game extends Pane implements Updateable {
             }
 
             private void checkCloudOutOfBounds() {
-                // for (Iterator<Cloud> iter = cloudPane.iterator(); iter.hasNext();) {
-                //     Cloud c = iter.next();
-                //     if (c.getBoundsInParent().intersects(bounds.getBoundsInLocal())) {
-                //         c.setState(new DeadCloudState());
-                //         iter.remove();
-                //         cloudPane.remove(c);
-                //     }
-                // }
-
                 for (Node c : cloudPane) {
                     if (c instanceof Cloud) {
                         if (c.getBoundsInParent().intersects(bounds.getBoundsInLocal())) {
@@ -336,6 +323,7 @@ class Game extends Pane implements Updateable {
         for (Node c : cloudPane) {
             if (c instanceof Cloud) {
                 if (heli.getBoundsInParent().intersects(c.getBoundsInParent()) && heli.getState().isIgnitionOn()) {
+                    System.out.println("seeding...");
                     ((Cloud) c).update();
                 }
             }
