@@ -1,12 +1,12 @@
 package com.project.a3;
 
 import java.util.Iterator;
-import java.util.concurrent.ThreadLocalRandom;
-
 import javafx.geometry.Point2D;
+import javafx.scene.Node;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.scene.transform.Transform;
+import javafx.scene.transform.Translate;
 
 class Cloud extends GameObject implements Updateable {
     private static final double MAX_COLOR_VALUE = 255;
@@ -22,12 +22,11 @@ class Cloud extends GameObject implements Updateable {
     private GameText cloudLabel;
     private Pond min;
     private Line distance;
-    private CloudState state = new DeadCloudState();
+    private CloudState state = new AliveCloudState();
     private double percentage, cloudColorValue, lengthX;
-    private double rand = ThreadLocalRandom.current().nextDouble(0.5, 2);
+    private double rand;
 
     Cloud(Point2D s, double size) {
-        
         circle = new BezierOval(new Point2D(s.getX() + rand, s.getY() + rand), size);
         cloudColorValue = 0;
         percentage = cloudColorValue / MAX_COLOR_VALUE;
@@ -51,13 +50,15 @@ class Cloud extends GameObject implements Updateable {
         return new Point2D(circle.getCenterX(), circle.getCenterY());
     }
 
-    public Pond findClosestPond(Iterator<Pond> iter) {
-        while (iter.hasNext()) {
-            Pond p = iter.next();
-            if (intersects(p.getFillBounds().getBoundsInParent())) {
-                min = p;
-                return min;
-            }
+    public Pond findClosestPond(Iterator<Node> iterator) {
+        while (iterator.hasNext()) {
+            Node p = iterator.next();
+            if (p instanceof Pond) {
+                if (intersects(((Pond) p).getFillBounds().getBoundsInParent())) {
+                    min = ((Pond) p);
+                    return min;
+                }
+        }
         }
         return null;
     }

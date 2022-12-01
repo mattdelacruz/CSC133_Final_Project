@@ -1,51 +1,43 @@
 package com.project.a3;
 
-import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
 
-class Clouds extends GameObjectPane<Cloud> implements Iterable<Cloud> {
-    private List<Cloud> cloudList = new ArrayList<Cloud>();
+import javafx.scene.Node;
+
+class Clouds extends GameObjectPane<Cloud> implements Iterable<Node> {
     private CloudWind wind = new CloudWind();
 
     Clouds() {
-        super();
     }
 
     public void clear() {
-        for (Iterator<Cloud> iter = cloudList.iterator(); iter.hasNext();) {
-            Cloud c = iter.next();
-            iter.remove();
-            cloudList.remove(c);
-            super.remove(c);
-        }
+        getChildren().clear();
     }
 
     @Override
-    public Iterator<Cloud> iterator() {
-        return cloudList.iterator();
+    public Iterator<Node> iterator() {
+        return getChildren().iterator();
     }
 
     public void add(Cloud o) {
-        super.add(o);
-        cloudList.add(o);
+        getChildren().add(o);
         o.getState().addToWind(o, wind);
     }
 
     public int size() {
-        return cloudList.size();
+        return getChildren().size();
     }
 
     public void remove(Cloud o) {
-        super.remove(o);
-        cloudList.remove(o);
+        getChildren().remove(o);
         o.getState().removeFromWind(o, wind);
     }
 
     public void updateBoundingBox() {
-        for (Iterator<Cloud> iter = cloudList.iterator(); iter.hasNext();) {
-            Cloud c = iter.next();
-            c.updateBoundingBox();
+        for (Node n : getChildren()) {
+            if (n instanceof Cloud) {
+                ((Cloud) n).updateBoundingBox();
+            }
         }
     }
 
