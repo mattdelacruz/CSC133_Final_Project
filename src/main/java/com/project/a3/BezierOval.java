@@ -4,9 +4,9 @@ import javafx.geometry.Point2D;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.paint.Paint;
-import javafx.scene.shape.CubicCurve;
 import javafx.scene.shape.Ellipse;
 import javafx.scene.shape.Shape;
+import javafx.scene.transform.Transform;
 import javafx.scene.transform.Translate;
 
 public class BezierOval extends Group { 
@@ -27,6 +27,10 @@ public class BezierOval extends Group {
 
     public double getCenterY() {
         return ellipse.getCenterY();
+    }
+
+    public void move(Translate t) {
+        this.getTransforms().add(t);
     }
 
     public void setFill(Paint value) {

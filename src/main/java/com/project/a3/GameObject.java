@@ -11,10 +11,10 @@ abstract class GameObject extends Group {
 
     boolean isBoundOn = false;
 
-    Rectangle bound = new Rectangle(getBoundsInParent().getMinX(),
-            getBoundsInParent().getMinY(),
-            getBoundsInParent().getWidth(),
-            getBoundsInParent().getHeight());
+    Rectangle bound = new Rectangle(getBoundsInLocal().getMinX(),
+            getBoundsInLocal().getMinY(),
+            getBoundsInLocal().getWidth(),
+            getBoundsInLocal().getHeight());
 
     public void showBoundingBox() {
         updateBound();
@@ -36,10 +36,10 @@ abstract class GameObject extends Group {
 
     private void updateBound() {
         getChildren().remove(bound);
-        bound = new Rectangle(getBoundsInParent().getMinX(),
-                getBoundsInParent().getMinY(),
-                getBoundsInParent().getWidth(),
-                getBoundsInParent().getHeight());
+        bound = new Rectangle(getBoundsInLocal().getMinX(),
+                getBoundsInLocal().getMinY(),
+                getBoundsInLocal().getWidth(),
+                getBoundsInLocal().getHeight());
     }
 
     private void checkIfBoundOn() {

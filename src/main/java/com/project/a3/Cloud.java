@@ -5,7 +5,6 @@ import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
-import javafx.scene.transform.Transform;
 import javafx.scene.transform.Translate;
 
 class Cloud extends GameObject implements Updateable {
@@ -58,7 +57,7 @@ class Cloud extends GameObject implements Updateable {
                     min = ((Pond) p);
                     return min;
                 }
-        }
+            }
         }
         return null;
     }
@@ -71,7 +70,7 @@ class Cloud extends GameObject implements Updateable {
         }
     }
 
-    public void move(Transform t) {
+    public void move(Translate t) {
         state.move(t, this);
     }
 

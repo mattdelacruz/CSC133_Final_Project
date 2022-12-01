@@ -36,8 +36,8 @@ class Helicopter extends GameObject {
                         heloBody.getBoundsInParent().getMinY() -
                                 LABEL_GAP),
                 Color.MAGENTA);
-        helicopter.getChildren().addAll(heloBody, heloBlade, fuelLabel);
-        getChildren().addAll(helicopter);
+        //helicopter.getChildren().addAll(heloBody, heloBlade, fuelLabel);
+        getChildren().addAll(heloBody, heloBlade, fuelLabel);
     }
 
     public void consumeFuel() {
@@ -54,7 +54,7 @@ class Helicopter extends GameObject {
     }
 
     public void left() {
-        helicopter.getTransforms()
+        getTransforms()
                 .add(new Rotate(
                         ROTATION_ANGLE,
                         heloBody.getPivotPoint().getX(),
@@ -62,7 +62,7 @@ class Helicopter extends GameObject {
     }
 
     public void right() {
-        helicopter.getTransforms()
+        getTransforms()
                 .add(new Rotate(
                         -ROTATION_ANGLE,
                         heloBody.getPivotPoint().getX(),
@@ -115,8 +115,8 @@ class Helicopter extends GameObject {
         return fuelValue;
     }
 
-    public Group getHelicopterGroup() {
-        return helicopter;
+    public GameObject getHelicopterGroup() {
+        return this;
     }
 
 }
