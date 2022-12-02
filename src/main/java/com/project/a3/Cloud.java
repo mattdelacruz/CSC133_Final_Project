@@ -4,10 +4,10 @@ import java.util.Iterator;
 import java.util.concurrent.ThreadLocalRandom;
 
 import javafx.geometry.Point2D;
+import javafx.scene.Node;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
-import javafx.scene.transform.Transform;
+import javafx.scene.transform.Translate;
 
 class Cloud extends GameObject implements Updateable {
     private static final double MAX_COLOR_VALUE = 255;
@@ -19,16 +19,16 @@ class Cloud extends GameObject implements Updateable {
     private static final Color FONT_COLOR = Color.BLACK;
     private static final Color DISTANCE_LINE_COLOR = Color.MAGENTA;
 
-    private Circle circle;
+    private BezierOval circle;
     private GameText cloudLabel;
     private Pond min;
     private Line distance;
-    private CloudState state = new DeadCloudState();
+    private CloudState state = new AliveCloudState();
     private double percentage, cloudColorValue, lengthX;
     private double rand = ThreadLocalRandom.current().nextDouble(0.5, 2);
 
     Cloud(Point2D s, double size) {
-        circle = new Circle(s.getX(), s.getY(), size);
+        circle = new BezierOval(new Point2D(s.getX(), s.getY()), size);
         cloudColorValue = 0;
         percentage = cloudColorValue / MAX_COLOR_VALUE;
         percentage *= 100;
@@ -51,12 +51,14 @@ class Cloud extends GameObject implements Updateable {
         return new Point2D(circle.getCenterX(), circle.getCenterY());
     }
 
-    public Pond findClosestPond(Iterator<Pond> iter) {
-        while (iter.hasNext()) {
-            Pond p = iter.next();
-            if (intersects(p.getFillBounds().getBoundsInParent())) {
-                min = p;
-                return min;
+    public Pond findClosestPond(Iterator<Node> iterator) {
+        while (iterator.hasNext()) {
+            Node p = iterator.next();
+            if (p instanceof Pond) {
+                if (getBoundsInParent().intersects(((Pond) p).getFillBounds().getBoundsInLocal())) {
+                    min = ((Pond) p);
+                    return min;
+                }
             }
         }
         return null;
@@ -70,7 +72,7 @@ class Cloud extends GameObject implements Updateable {
         }
     }
 
-    public void move(Transform t) {
+    public void move(Translate t) {
         state.move(t, this);
     }
 
@@ -95,9 +97,10 @@ class Cloud extends GameObject implements Updateable {
     }
 
     public Line createDistanceLine() {
-        distance = new Line(circle.getBoundsInParent().getCenterX(),
-                circle.getBoundsInParent().getCenterY(),
+        distance = new Line(getBoundsInParent().getCenterX(),
+                getBoundsInParent().getCenterY(),
                 min.getCenter().getX(), min.getCenter().getY());
+
         distance.setStroke(DISTANCE_LINE_COLOR);
         lengthX = Math.abs(distance.getBoundsInLocal().getMinX() - distance.getBoundsInLocal().getMaxX());
         return distance;
@@ -124,11 +127,4 @@ class Cloud extends GameObject implements Updateable {
         state = s;
     }
 
-    public Circle getCloudCircle() {
-        return circle;
-    }
-
-    public GameText getCloudLabel() {
-        return cloudLabel;
-    }
 }

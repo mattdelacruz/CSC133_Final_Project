@@ -6,7 +6,6 @@ import javafx.scene.transform.Translate;
 
 class CloudWind implements WindSpeed {
     private static final double WIND_SPEED = 1;
-
     private ArrayList<Cloud> windBlowingOn = new ArrayList<Cloud>();
 
     @Override

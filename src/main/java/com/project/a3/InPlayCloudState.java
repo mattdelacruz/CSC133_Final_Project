@@ -1,13 +1,12 @@
 package com.project.a3;
 
-import javafx.scene.transform.Transform;
+import javafx.scene.transform.Translate;
 
 class InPlayCloudState implements CloudState {
 
     @Override
-    public void move(Transform t, Cloud c) {
-        c.getCloudCircle().getTransforms().add(t);
-        c.getCloudLabel().getTransforms().add(t);
+    public void move(Translate t, Cloud c) {
+        c.getTransforms().add(t);
     }
 
     @Override

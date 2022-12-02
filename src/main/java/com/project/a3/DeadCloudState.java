@@ -1,11 +1,11 @@
 package com.project.a3;
 
-import javafx.scene.transform.Transform;
+import javafx.scene.transform.Translate;
 
 class DeadCloudState implements CloudState {
 
     @Override
-    public void move(Transform t, Cloud c) {
+    public void move(Translate t, Cloud c) {
         return;
     }
 
