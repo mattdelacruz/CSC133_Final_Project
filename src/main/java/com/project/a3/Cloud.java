@@ -25,10 +25,10 @@ class Cloud extends GameObject implements Updateable {
     private Line distance;
     private CloudState state = new AliveCloudState();
     private double percentage, cloudColorValue, lengthX;
-    private double rand = ThreadLocalRandom.current().nextDouble(0, 5);
+    private double rand = ThreadLocalRandom.current().nextDouble(0.5, 2);
 
     Cloud(Point2D s, double size) {
-        circle = new BezierOval(new Point2D(s.getX() + rand, s.getY() + rand), size);
+        circle = new BezierOval(new Point2D(s.getX(), s.getY()), size);
         cloudColorValue = 0;
         percentage = cloudColorValue / MAX_COLOR_VALUE;
         percentage *= 100;
@@ -55,7 +55,7 @@ class Cloud extends GameObject implements Updateable {
         while (iterator.hasNext()) {
             Node p = iterator.next();
             if (p instanceof Pond) {
-                if (intersects(((Pond) p).getFillBounds().getBoundsInParent())) {
+                if (getBoundsInParent().intersects(((Pond) p).getFillBounds().getBoundsInLocal())) {
                     min = ((Pond) p);
                     return min;
                 }
@@ -97,9 +97,10 @@ class Cloud extends GameObject implements Updateable {
     }
 
     public Line createDistanceLine() {
-        distance = new Line(circle.getBoundsInParent().getCenterX(),
-                circle.getBoundsInParent().getCenterY(),
+        distance = new Line(getBoundsInParent().getCenterX(),
+                getBoundsInParent().getCenterY(),
                 min.getCenter().getX(), min.getCenter().getY());
+
         distance.setStroke(DISTANCE_LINE_COLOR);
         lengthX = Math.abs(distance.getBoundsInLocal().getMinX() - distance.getBoundsInLocal().getMaxX());
         return distance;

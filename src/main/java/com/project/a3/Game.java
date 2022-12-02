@@ -1,5 +1,6 @@
 package com.project.a3;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Optional;
 import java.util.concurrent.ThreadLocalRandom;
@@ -33,7 +34,7 @@ class Game extends Pane implements Updateable {
     private static final int POND_SPAWN = 3;
     private static final int CLOUD_SPAWN = 5;
     private static final double PERCENT_THRESHOLD = 30.0;
-    private static final Color HELIPAD_COLOR = Color.GRAY;
+    private static final Color HELIPAD_COLOR = Color.RED;
     private static final Color HELI_COLOR = Color.YELLOW;
     private static final Scale SCALE = new Scale(1, -1);
     private static final String LOSE_TEXT = "You have lost! Play again?";
@@ -94,14 +95,13 @@ class Game extends Pane implements Updateable {
                     closest = ((Cloud)c).findClosestPond(pondPane.iterator());
                     if (closest != null) {
                         distanceLines.getChildren().add(((Cloud)c).createDistanceLine());
-
                         if (((Cloud)c).getPercentage() > PERCENT_THRESHOLD &&
                                 now % POND_UPDATE_TIME == 0) {
                             closest.update(((Cloud)c).getPercentageToPond());
+                            }
                         }
                     }
                 }
-            }
             }
 
             private void resetDistanceLines() {
@@ -125,14 +125,19 @@ class Game extends Pane implements Updateable {
             }
 
             private void checkCloudOutOfBounds() {
+                ArrayList<Cloud> toRemove = new ArrayList<Cloud>();
                 for (Node c : cloudPane) {
-                    if (c instanceof Cloud) {
-                        if (c.getBoundsInParent().intersects(bounds.getBoundsInLocal())) {
-                            ((Cloud)c).setState(new DeadCloudState());
-                            cloudPane.remove((Cloud)c);
-                        }
+                        if (c instanceof Cloud) {
+                            if (c.getBoundsInParent().intersects(bounds.getBoundsInLocal())) {
+                                ((Cloud) c).setState(new DeadCloudState());
+                                toRemove.add((Cloud) c);
+                            }
+                    }
                 }
-            }
+
+                for (Cloud c : toRemove) {
+                    cloudPane.remove(c);
+                }
             }
         };
         loop.start();
@@ -275,11 +280,9 @@ class Game extends Pane implements Updateable {
         //             ThreadLocalRandom.current().nextDouble(minX, maxX + 1),
         //             ThreadLocalRandom.current().nextDouble(minY, maxY + 1)), CLOUD_SIZE);
         // }
-
         c = new Cloud(new Point2D(
-                    ThreadLocalRandom.current().nextDouble(minX, maxX + 1),
-                    ThreadLocalRandom.current().nextDouble(minY, maxY + 1)), CLOUD_SIZE);
-
+            ThreadLocalRandom.current().nextDouble(minX, maxX + 1),
+            ThreadLocalRandom.current().nextDouble(minY, maxY + 1)), CLOUD_SIZE);
         cloudPane.add(c);
     }
 
