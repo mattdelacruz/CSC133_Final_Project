@@ -325,7 +325,6 @@ class Game extends Pane implements Updateable {
         for (Node c : cloudPane) {
             if (c instanceof Cloud) {
                 if (heli.getBoundsInParent().intersects(c.getBoundsInParent()) && heli.getState().isIgnitionOn()) {
-                    System.out.println("seeding...");
                     ((Cloud) c).update();
                 }
             }

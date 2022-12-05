@@ -9,21 +9,20 @@ import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.CubicCurve;
 import javafx.scene.shape.Ellipse;
-import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
 
 public class BezierOval extends Group {
-    private static final int MIN_CURVE_WIDTH = 20;
-    private static final int MAX_CURVE_WIDTH = 30;
-    private static final int MIN_CURVE_HEIGHT = 15;
-    private static final int MAX_CURVE_HEIGHT = 20;
+    private static final int MIN_CURVE_WIDTH = 30;
+    private static final int MAX_CURVE_WIDTH = 50;
+    private static final int MIN_CURVE_HEIGHT = 10;
+    private static final int MAX_CURVE_HEIGHT = 15;
     private Ellipse ellipse;
     private Group cubicCurveGroup;
     private Point2D center;
 
-    BezierOval(Point2D start, double radius) {
+    BezierOval(Point2D start, double radiusX, double radiusY) {
         center = start;
-        ellipse = new Ellipse(center.getX(), center.getY(), radius * 2, radius);
+        ellipse = new Ellipse(center.getX(), center.getY(), radiusX, radiusY);
         cubicCurveGroup = new Group();
         createCubicCurves(0);
         getChildren().addAll(cubicCurveGroup, ellipse);
@@ -94,8 +93,8 @@ public class BezierOval extends Group {
             if (s instanceof Group) {
                 for (Node n : ((Group) s).getChildren()) {
                     if (n instanceof CubicCurve) {
-                        ((CubicCurve) n).setFill(Color.WHITE);
-                        ((CubicCurve) n).setStroke(Color.GRAY);
+                        ((CubicCurve) n).setFill(value);
+                        ((CubicCurve) n).setStroke(Color.BLACK);
                     }
                 }
             }
