@@ -1,7 +1,6 @@
 package com.project.a3;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.Optional;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -85,19 +84,19 @@ class Game extends Pane implements Updateable {
                 if (now % CLOUD_DECAY_TIME == 0) {
                     for (Node c : cloudPane)
                         if (c instanceof Cloud)
-                        ((Cloud)c).decrease();
+                            ((Cloud) c).decrease();
                 }
             }
 
             private void updateClosestPond(long now) {
                 for (Node c : cloudPane) {
                     if (c instanceof Cloud) {
-                    closest = ((Cloud)c).findClosestPond(pondPane.iterator());
-                    if (closest != null) {
-                        distanceLines.getChildren().add(((Cloud)c).createDistanceLine());
-                        if (((Cloud)c).getPercentage() > PERCENT_THRESHOLD &&
-                                now % POND_UPDATE_TIME == 0) {
-                            closest.update(((Cloud)c).getPercentageToPond());
+                        closest = ((Cloud) c).findClosestPond(pondPane.iterator());
+                        if (closest != null) {
+                            distanceLines.getChildren().add(((Cloud) c).createDistanceLine());
+                            if (((Cloud) c).getPercentage() > PERCENT_THRESHOLD &&
+                                    now % POND_UPDATE_TIME == 0) {
+                                closest.update(((Cloud) c).getPercentageToPond());
                             }
                         }
                     }
@@ -118,8 +117,8 @@ class Game extends Pane implements Updateable {
                     createCloud();
                 }
 
-                if (cloudPane.size() == 3 || cloudPane.size() == 4 && 
-                dice == 1) {
+                if (cloudPane.size() == 3 || cloudPane.size() == 4 &&
+                        dice == 1) {
                     createCloud();
                 }
             }
@@ -127,11 +126,11 @@ class Game extends Pane implements Updateable {
             private void checkCloudOutOfBounds() {
                 ArrayList<Cloud> toRemove = new ArrayList<Cloud>();
                 for (Node c : cloudPane) {
-                        if (c instanceof Cloud) {
-                            if (c.getBoundsInParent().intersects(bounds.getBoundsInLocal())) {
-                                ((Cloud) c).setState(new DeadCloudState());
-                                toRemove.add((Cloud) c);
-                            }
+                    if (c instanceof Cloud) {
+                        if (c.getBoundsInParent().intersects(bounds.getBoundsInLocal())) {
+                            ((Cloud) c).setState(new DeadCloudState());
+                            toRemove.add((Cloud) c);
+                        }
                     }
                 }
 
@@ -270,39 +269,39 @@ class Game extends Pane implements Updateable {
 
         Cloud c;
         // if (cloudPane != null) {
-        //     do {
-        //         c = new Cloud(new Point2D(
-        //                 ThreadLocalRandom.current().nextDouble(minX, maxX + 1),
-        //                 ThreadLocalRandom.current().nextDouble(minY, maxY + 1)), CLOUD_SIZE);
-        //     } while (checkCloudIntersection(c));
+        // do {
+        // c = new Cloud(new Point2D(
+        // ThreadLocalRandom.current().nextDouble(minX, maxX + 1),
+        // ThreadLocalRandom.current().nextDouble(minY, maxY + 1)), CLOUD_SIZE);
+        // } while (checkCloudIntersection(c));
         // } else {
-        //     c = new Cloud(new Point2D(
-        //             ThreadLocalRandom.current().nextDouble(minX, maxX + 1),
-        //             ThreadLocalRandom.current().nextDouble(minY, maxY + 1)), CLOUD_SIZE);
+        // c = new Cloud(new Point2D(
+        // ThreadLocalRandom.current().nextDouble(minX, maxX + 1),
+        // ThreadLocalRandom.current().nextDouble(minY, maxY + 1)), CLOUD_SIZE);
         // }
         c = new Cloud(new Point2D(
-            ThreadLocalRandom.current().nextDouble(minX, maxX + 1),
-            ThreadLocalRandom.current().nextDouble(minY, maxY + 1)), CLOUD_SIZE);
+                ThreadLocalRandom.current().nextDouble(minX, maxX + 1),
+                ThreadLocalRandom.current().nextDouble(minY, maxY + 1)), CLOUD_SIZE);
         cloudPane.add(c);
     }
 
     private boolean checkPondIntersection(GameObject p) {
         for (Node pond : pondPane) {
             if (pond instanceof Pond) {
-                if (p.intersects(((Pond)pond).getBoundsInLocal()))
+                if (p.intersects(((Pond) pond).getBoundsInLocal()))
                     return true;
             }
         }
-        
+
         return false;
     }
 
     private boolean checkCloudIntersection(GameObject c) {
         for (Node cloud : cloudPane) {
             if (cloud instanceof Cloud) {
-                if (c.intersects(((Cloud)cloud).getBoundsInLocal()))
+                if (c.intersects(((Cloud) cloud).getBoundsInLocal()))
                     return true;
-                }
+            }
         }
         return false;
     }
@@ -326,7 +325,6 @@ class Game extends Pane implements Updateable {
         for (Node c : cloudPane) {
             if (c instanceof Cloud) {
                 if (heli.getBoundsInParent().intersects(c.getBoundsInParent()) && heli.getState().isIgnitionOn()) {
-                    System.out.println("seeding...");
                     ((Cloud) c).update();
                 }
             }
@@ -342,7 +340,7 @@ class Game extends Pane implements Updateable {
         helipad.showBoundingBox();
         for (Node p : pondPane) {
             if (p instanceof Pond)
-                ((Pond)p).showBoundingBox();
+                ((Pond) p).showBoundingBox();
         }
         for (Node c : cloudPane) {
             if (c instanceof Cloud)
@@ -366,12 +364,12 @@ class Game extends Pane implements Updateable {
 
         for (Node p : pondPane) {
             if (p instanceof Pond)
-                ((Pond)p).updateBoundingBox();
+                ((Pond) p).updateBoundingBox();
         }
 
         for (Node c : cloudPane) {
             if (c instanceof Cloud)
-                ((Cloud)c).updateBoundingBox();
+                ((Cloud) c).updateBoundingBox();
         }
         if (heli.isIgnitionOn()) {
             heli.consumeFuel();

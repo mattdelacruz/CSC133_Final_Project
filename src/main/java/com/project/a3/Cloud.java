@@ -28,7 +28,7 @@ class Cloud extends GameObject implements Updateable {
     private double rand = ThreadLocalRandom.current().nextDouble(0.5, 2);
 
     Cloud(Point2D s, double size) {
-        circle = new BezierOval(new Point2D(s.getX(), s.getY()), size);
+        circle = new BezierOval(new Point2D(s.getX(), s.getY()), size * 2, size);
         cloudColorValue = 0;
         percentage = cloudColorValue / MAX_COLOR_VALUE;
         percentage *= 100;

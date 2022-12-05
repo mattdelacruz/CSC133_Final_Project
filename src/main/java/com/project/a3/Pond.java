@@ -4,7 +4,6 @@ import java.util.concurrent.ThreadLocalRandom;
 
 import javafx.geometry.Point2D;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 
 class Pond extends GameObject {
@@ -14,7 +13,7 @@ class Pond extends GameObject {
     private static final String LABEL_FORMAT = "%.0f%%";
     private static final int FILL_DISTANCE = 4;
 
-    private Circle circle;
+    private BezierOval circle;
     private GameText pondLabel;
     private Point2D pos;
     private double currentRadius, maxRadius, percentAdder, currentArea,
@@ -57,15 +56,15 @@ class Pond extends GameObject {
     }
 
     private void createPond() {
-        circle = new Circle(pos.getX(), pos.getY(),
-                Math.sqrt(currentArea / Math.PI));
+        circle = new BezierOval(pos,
+                Math.sqrt(currentArea / Math.PI), Math.sqrt(currentArea / Math.PI));
         circle.setFill(POND_COLOR);
         pondLabel = createLabel(String.format(LABEL_FORMAT,
                 getSize()),
                 new Point2D(
-                        circle.getBoundsInParent().getCenterX() -
+                        circle.getCenterX() -
                                 (GameText.FONT_SIZE / 2),
-                        circle.getBoundsInParent().getCenterY() +
+                        circle.getCenterY() +
                                 (GameText.FONT_SIZE / 2)),
                 FONT_COLOR);
         fillBounds = new Rectangle(
