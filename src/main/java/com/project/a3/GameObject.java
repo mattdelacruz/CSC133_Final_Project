@@ -11,7 +11,7 @@ abstract class GameObject extends Group {
     private static final Color BOUND_STROKE = Color.YELLOW;
 
     private boolean isBoundOn = false;
-    private int distanceValue = 0;
+    private int distanceValue, minDistance;
 
     Rectangle bound = new Rectangle(getBoundsInLocal().getMinX(),
             getBoundsInLocal().getMinY(),
@@ -69,6 +69,14 @@ abstract class GameObject extends Group {
                     .pow(getBoundsInParent().getCenterX() - ((GameObject) lineTo).getBoundsInLocal().getCenterX(), 2)
                     + (Math.pow(getBoundsInParent().getCenterY() - ((GameObject) lineTo).getBoundsInLocal().getCenterY(),
                             2)));
+            if (minDistance == 0) {
+                minDistance = distanceValue;
+            }
+            else if (minDistance > distanceValue) {
+                minDistance = distanceValue;
+            }
+            
+
             GameText g = new GameText(Integer.toString(distanceValue),
                     new Point2D(distanceLine.getStartX() + (distanceLine.getEndX() - distanceLine.getStartX()) / 2,
                             distanceLine.getStartY() + (distanceLine.getEndY() - distanceLine.getStartY()) / 2),
@@ -80,5 +88,9 @@ abstract class GameObject extends Group {
 
     public int getDistanceValue() {
         return distanceValue;
+    }
+
+    public int getMinDistance() {
+        return minDistance;
     }
 }
