@@ -57,7 +57,7 @@ class Pond extends GameObject {
 
     private void createPond() {
         circle = new BezierOval(pos,
-                Math.sqrt(currentArea / Math.PI), Math.sqrt(currentArea / Math.PI));
+                Math.sqrt(currentArea / Math.PI), Math.sqrt(currentArea / Math.PI), 0);
         circle.setFill(POND_COLOR);
         pondLabel = createLabel(String.format(LABEL_FORMAT,
                 getSize()),

@@ -50,6 +50,7 @@ class Game extends Pane implements Updateable {
     private Group distanceLines = new Group();
     private Rectangle bounds = new Rectangle(GAME_WIDTH + (CLOUD_SIZE * 2), 0, 1, GAME_HEIGHT);
     private Pond closest = null;
+    Runtime runtime = Runtime.getRuntime();
 
     boolean isBoundsOn = false;
     boolean isDistanceLinesOn = false;
@@ -92,17 +93,28 @@ class Game extends Pane implements Updateable {
                 for (Node c : cloudPane) {
                     if (c instanceof Cloud) {
                         closest = ((Cloud) c).findClosestPond(pondPane.iterator());
-                        if (closest != null) {
-                            distanceLines.getChildren().add(((Cloud) c).createDistanceLine());
-                            if (((Cloud) c).getPercentage() > PERCENT_THRESHOLD &&
-                                    now % POND_UPDATE_TIME == 0) {
-                                closest.update(((Cloud) c).getPercentageToPond());
+                        for (Node p : pondPane) {
+                            if (p instanceof Pond) {
+                                distanceLines.getChildren().add(((Cloud) c).createDistanceLine(((Pond) p)));
+                                if (((Cloud) c).getPercentage() > PERCENT_THRESHOLD &&
+                                        now % POND_UPDATE_TIME == 0) {
+                                    closest.update(((Cloud) c).getPercentageToPond());
+                                }
                             }
                         }
                     }
                 }
+
             }
 
+            // loading a sound file
+            //
+            // private static final Media blimpDroneMedia = new
+            // Media(SoundPlayer.class.getResource("resources/AirshipDrone.mp3").toExternalForm());
+            //blimpSoundPlayer = new MediaPlayer(blimpDroneMedia);
+            //blimpSoundPlayer.setCycleCount(MediaPlayer.INDEFINITE);
+            //blimpSoundPlayer.setVolume(0);
+            //blimpSoundPLayer.play();
             private void resetDistanceLines() {
                 distanceLines.getChildren().clear();
 
@@ -133,7 +145,6 @@ class Game extends Pane implements Updateable {
                         }
                     }
                 }
-
                 for (Cloud c : toRemove) {
                     cloudPane.remove(c);
                 }
@@ -164,7 +175,6 @@ class Game extends Pane implements Updateable {
         for (int i = 0; i < CLOUD_SPAWN; i++) {
             createCloud();
         }
-
     }
 
     private void getEndResult() {
@@ -251,7 +261,7 @@ class Game extends Pane implements Updateable {
                         ThreadLocalRandom.current().nextDouble(minY, maxY +
                                 1)),
                         POND_SIZE);
-            } while (checkPondIntersection(p));
+            } while (checkObjectCollision(p));
         } else {
             p = new Pond(new Point2D(
                     ThreadLocalRandom.current().nextDouble(minX, maxX + 1),
@@ -266,43 +276,39 @@ class Game extends Pane implements Updateable {
         double minX = -GAME_WIDTH / 2;
         double maxY = GAME_HEIGHT - (CLOUD_SIZE / 2);
         double minY = helipad.getBoundsInParent().getMaxY() + CLOUD_SIZE;
-
         Cloud c;
-        // if (cloudPane != null) {
-        // do {
-        // c = new Cloud(new Point2D(
-        // ThreadLocalRandom.current().nextDouble(minX, maxX + 1),
-        // ThreadLocalRandom.current().nextDouble(minY, maxY + 1)), CLOUD_SIZE);
-        // } while (checkCloudIntersection(c));
-        // } else {
-        // c = new Cloud(new Point2D(
-        // ThreadLocalRandom.current().nextDouble(minX, maxX + 1),
-        // ThreadLocalRandom.current().nextDouble(minY, maxY + 1)), CLOUD_SIZE);
-        // }
-        c = new Cloud(new Point2D(
-                ThreadLocalRandom.current().nextDouble(minX, maxX + 1),
-                ThreadLocalRandom.current().nextDouble(minY, maxY + 1)), CLOUD_SIZE);
+        if (cloudPane != null) {
+            do {
+                c = new Cloud(new Point2D(
+                        ThreadLocalRandom.current().nextDouble(minX, maxX + 1),
+                        ThreadLocalRandom.current().nextDouble(minY, maxY + 1)), CLOUD_SIZE);
+
+            } while (checkObjectCollision(c));
+        } else {
+            c = new Cloud(new Point2D(
+                    ThreadLocalRandom.current().nextDouble(minX, maxX + 1),
+                    ThreadLocalRandom.current().nextDouble(minY, maxY + 1)), CLOUD_SIZE);
+        }
         cloudPane.add(c);
     }
 
-    private boolean checkPondIntersection(GameObject p) {
-        for (Node pond : pondPane) {
-            if (pond instanceof Pond) {
-                if (p.intersects(((Pond) pond).getBoundsInLocal()))
-                    return true;
+    private boolean checkObjectCollision(GameObject o) {
+        if (o instanceof Pond) {
+            for (Node n : pondPane) {
+                if (n instanceof Pond) {
+                    if (o.intersects(((Pond) n).getBoundsInLocal()))
+                        return true;
+                }
+            }
+        } else if (o instanceof Cloud) {
+            for (Node n : cloudPane) {
+                if (n instanceof Cloud) {
+                    if (o.intersects(((Cloud) n).getBoundsInLocal()))
+                        return true;
+                }
             }
         }
 
-        return false;
-    }
-
-    private boolean checkCloudIntersection(GameObject c) {
-        for (Node cloud : cloudPane) {
-            if (cloud instanceof Cloud) {
-                if (c.intersects(((Cloud) cloud).getBoundsInLocal()))
-                    return true;
-            }
-        }
         return false;
     }
 

@@ -14,18 +14,19 @@ import javafx.scene.shape.Shape;
 public class BezierOval extends Group {
     private static final int MIN_CURVE_WIDTH = 30;
     private static final int MAX_CURVE_WIDTH = 50;
-    private static final int MIN_CURVE_HEIGHT = 10;
-    private static final int MAX_CURVE_HEIGHT = 15;
+    private static final int MIN_CURVE_HEIGHT = 20;
+    private static final int MAX_CURVE_HEIGHT = 45;
     private Ellipse ellipse;
     private Group cubicCurveGroup;
     private Point2D center;
 
-    BezierOval(Point2D start, double radiusX, double radiusY) {
+    BezierOval(Point2D start, double radiusX, double radiusY, double startAngle) {
         center = start;
         ellipse = new Ellipse(center.getX(), center.getY(), radiusX, radiusY);
+        ellipse.setStroke(Color.BLACK);
         cubicCurveGroup = new Group();
-        createCubicCurves(0);
-        getChildren().addAll(cubicCurveGroup, ellipse);
+        createCubicCurves(startAngle);
+        getChildren().addAll(ellipse, cubicCurveGroup);
     }
 
     private void createCubicCurves(double startAngle) {
@@ -37,32 +38,28 @@ public class BezierOval extends Group {
         double endAngle = startAngle + ThreadLocalRandom.current().nextDouble(MIN_CURVE_WIDTH, MAX_CURVE_WIDTH);
 
         if (Math.toRadians(startAngle) < Math.toRadians(360)) {
-            if (Math.toRadians(startAngle) >= Math.toRadians(180)) {
-                cubicCurveStartX = center.getX() + ellipse.getRadiusX() * Math.cos(Math.toRadians(startAngle));
-                cubicCurveStartY = center.getY() + ellipse.getRadiusY() * Math.sin(Math.toRadians(startAngle));
+            cubicCurveStartX = center.getX() + ellipse.getRadiusX() *
+                    Math.cos(Math.toRadians(startAngle));
+            cubicCurveStartY = center.getY() + ellipse.getRadiusY() *
+                    Math.sin(Math.toRadians(startAngle));
+            cubicCurveEndX = center.getX() + ellipse.getRadiusX() *
+                    Math.cos(Math.toRadians(endAngle));
+            cubicCurveEndY = center.getY() + ellipse.getRadiusY() *
+                    Math.sin(Math.toRadians(endAngle));
+            if (Math.toRadians(startAngle) == Math.toRadians(180)) {
 
-                cubicCurveEndX = center.getX() + ellipse.getRadiusX() * Math.cos(Math.toRadians(endAngle));
-                cubicCurveEndY = center.getY() + ellipse.getRadiusY() * Math.sin(Math.toRadians(endAngle));
-
-                cubicCurveControlX1 = cubicCurveStartX + (cubicCurveEndX - cubicCurveStartX) / 2;
+            } else if (Math.toRadians(startAngle) > Math.toRadians(180)) {
                 cubicCurveControlY1 = cubicCurveStartY
                         - ThreadLocalRandom.current().nextDouble(MIN_CURVE_HEIGHT, MAX_CURVE_HEIGHT);
 
             } else {
-                cubicCurveStartX = center.getX() + ellipse.getRadiusX() *
-                        Math.cos(Math.toRadians(startAngle));
-                cubicCurveStartY = center.getY() + ellipse.getRadiusY() *
-                        Math.sin(Math.toRadians(startAngle));
 
-                cubicCurveEndX = center.getX() + ellipse.getRadiusX() *
-                        Math.cos(Math.toRadians(endAngle));
-                cubicCurveEndY = center.getY() + ellipse.getRadiusY() *
-                        Math.sin(Math.toRadians(endAngle));
-
-                cubicCurveControlX1 = cubicCurveStartX + (cubicCurveEndX - cubicCurveStartX) / 2;
-                cubicCurveControlY1 = cubicCurveStartY +
-                        ThreadLocalRandom.current().nextDouble(MIN_CURVE_HEIGHT, MAX_CURVE_HEIGHT);
+                cubicCurveControlY1 = cubicCurveStartY
+                        + ThreadLocalRandom.current().nextDouble(MIN_CURVE_HEIGHT, MAX_CURVE_HEIGHT);
             }
+
+            cubicCurveControlX1 = center.getX()
+                    + ellipse.getRadiusX() * Math.cos(Math.toRadians(startAngle + ((endAngle - startAngle) / 2)));
 
             if (Math.abs(cubicCurveEndX - cubicCurveStartX) >= MIN_CURVE_WIDTH) {
                 cubicCurveGroup.getChildren()

@@ -4,6 +4,7 @@ import java.util.Iterator;
 import java.util.concurrent.ThreadLocalRandom;
 
 import javafx.geometry.Point2D;
+import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
@@ -22,13 +23,13 @@ class Cloud extends GameObject implements Updateable {
     private BezierOval circle;
     private GameText cloudLabel;
     private Pond min;
-    private Line distance;
-    private CloudState state = new AliveCloudState();
-    private double percentage, cloudColorValue, lengthX;
+    private CloudState state = new DeadCloudState();
+    private CloudState inPlay = new InPlayCloudState();
+    private double percentage, cloudColorValue;
     private double rand = ThreadLocalRandom.current().nextDouble(0.5, 2);
 
     Cloud(Point2D s, double size) {
-        circle = new BezierOval(new Point2D(s.getX(), s.getY()), size * 2, size);
+        circle = new BezierOval(new Point2D(s.getX(), s.getY()), size * 1.5, size, 0);
         cloudColorValue = 0;
         percentage = cloudColorValue / MAX_COLOR_VALUE;
         percentage *= 100;
@@ -52,16 +53,29 @@ class Cloud extends GameObject implements Updateable {
     }
 
     public Pond findClosestPond(Iterator<Node> iterator) {
+        min = (Pond) iterator.next();
+
+        if (!getState().equals(inPlay)) {
+            return null;
+        }
+
         while (iterator.hasNext()) {
             Node p = iterator.next();
             if (p instanceof Pond) {
-                if (getBoundsInParent().intersects(((Pond) p).getFillBounds().getBoundsInLocal())) {
-                    min = ((Pond) p);
-                    return min;
+                if (getBoundsInParent().intersects(((Pond) p).getFillBounds().getBoundsInParent())) {
+
+                    // double slope1 = Math.abs(((Pond) p).getCenter().getY() - getBoundsInParent().getCenterY())
+                    //         / Math.abs(((Pond) p).getCenter().getX() - getBoundsInParent().getCenterX());
+
+                    // double slope2 = Math.abs(min.getCenter().getY() - getBoundsInParent().getCenterY())
+                    //         / Math.abs(min.getCenter().getX() - getBoundsInParent().getCenterX());
+
+                    if (slope1 >= slope2)
+                        min = ((Pond) p);
                 }
             }
         }
-        return null;
+        return min;
     }
 
     @Override
@@ -73,6 +87,9 @@ class Cloud extends GameObject implements Updateable {
     }
 
     public void move(Translate t) {
+        if (getBoundsInParent().getCenterX() > 0) {
+            setState(inPlay);
+        }
         state.move(t, this);
     }
 
@@ -93,18 +110,7 @@ class Cloud extends GameObject implements Updateable {
     }
 
     public double getPercentageToPond() {
-        return lengthX / min.getFillBounds().getBoundsInLocal().getWidth();
-    }
-
-    public Line createDistanceLine() {
-        distance = new Line(getBoundsInParent().getCenterX(),
-                getBoundsInParent().getCenterY(),
-                min.getCenter().getX(), min.getCenter().getY());
-
-        distance.setStroke(DISTANCE_LINE_COLOR);
-        lengthX = Math.abs(distance.getBoundsInLocal().getMinX() - distance.getBoundsInLocal().getMaxX());
-        return distance;
-
+        return getDistanceValue() / min.getFillBounds().getBoundsInLocal().getWidth();
     }
 
     private void updateLabel(double val) {
