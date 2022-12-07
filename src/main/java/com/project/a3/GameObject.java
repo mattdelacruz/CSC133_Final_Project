@@ -3,13 +3,15 @@ package com.project.a3;
 import javafx.geometry.Point2D;
 import javafx.scene.Group;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
 
 abstract class GameObject extends Group {
     private static final Color BOUND_FILL = Color.TRANSPARENT;
     private static final Color BOUND_STROKE = Color.YELLOW;
 
-    boolean isBoundOn = false;
+    private boolean isBoundOn = false;
+    private int distanceValue, minDistance;
 
     Rectangle bound = new Rectangle(getBoundsInLocal().getMinX(),
             getBoundsInLocal().getMinY(),
@@ -53,5 +55,42 @@ abstract class GameObject extends Group {
             getChildren().remove(bound);
             isBoundOn = false;
         }
+    }
+
+    public Group createDistanceLine(Object lineTo) {
+        Group distanceGroup = new Group();
+
+        if (lineTo instanceof GameObject) {
+            Line distanceLine = new Line(getBoundsInParent().getCenterX(),
+                    getBoundsInParent().getCenterY(),
+                    ((GameObject) lineTo).getBoundsInLocal().getCenterX(), ((GameObject) lineTo).getBoundsInLocal().getCenterY());
+            distanceLine.setStroke(Color.MAGENTA);
+            distanceValue = (int) Math.sqrt(Math
+                    .pow(getBoundsInParent().getCenterX() - ((GameObject) lineTo).getBoundsInLocal().getCenterX(), 2)
+                    + (Math.pow(getBoundsInParent().getCenterY() - ((GameObject) lineTo).getBoundsInLocal().getCenterY(),
+                            2)));
+            if (minDistance == 0) {
+                minDistance = distanceValue;
+            }
+            else if (minDistance > distanceValue) {
+                minDistance = distanceValue;
+            }
+            
+
+            GameText g = new GameText(Integer.toString(distanceValue),
+                    new Point2D(distanceLine.getStartX() + (distanceLine.getEndX() - distanceLine.getStartX()) / 2,
+                            distanceLine.getStartY() + (distanceLine.getEndY() - distanceLine.getStartY()) / 2),
+                    Color.RED);
+            distanceGroup.getChildren().addAll(distanceLine, g);
+        }
+        return distanceGroup;
+    }
+
+    public int getDistanceValue() {
+        return distanceValue;
+    }
+
+    public int getMinDistance() {
+        return minDistance;
     }
 }
