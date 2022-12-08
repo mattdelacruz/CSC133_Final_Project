@@ -11,7 +11,6 @@ abstract class GameObject extends Group {
     private static final Color BOUND_STROKE = Color.YELLOW;
 
     private boolean isBoundOn = false;
-    private int distanceValue, minDistance;
 
     Rectangle bound = new Rectangle(getBoundsInLocal().getMinX(),
             getBoundsInLocal().getMinY(),
@@ -57,25 +56,20 @@ abstract class GameObject extends Group {
         }
     }
 
-    public Group createDistanceLine(Object lineTo) {
+    public Group createDistanceLine(Object lineTo, Color color) {
         Group distanceGroup = new Group();
 
         if (lineTo instanceof GameObject) {
             Line distanceLine = new Line(getBoundsInParent().getCenterX(),
                     getBoundsInParent().getCenterY(),
-                    ((GameObject) lineTo).getBoundsInLocal().getCenterX(), ((GameObject) lineTo).getBoundsInLocal().getCenterY());
-            distanceLine.setStroke(Color.MAGENTA);
-            distanceValue = (int) Math.sqrt(Math
+                    ((GameObject) lineTo).getBoundsInLocal().getCenterX(),
+                    ((GameObject) lineTo).getBoundsInLocal().getCenterY());
+            distanceLine.setStroke(color);
+            int distanceValue = (int) Math.sqrt(Math
                     .pow(getBoundsInParent().getCenterX() - ((GameObject) lineTo).getBoundsInLocal().getCenterX(), 2)
-                    + (Math.pow(getBoundsInParent().getCenterY() - ((GameObject) lineTo).getBoundsInLocal().getCenterY(),
+                    + (Math.pow(
+                            getBoundsInParent().getCenterY() - ((GameObject) lineTo).getBoundsInLocal().getCenterY(),
                             2)));
-            if (minDistance == 0) {
-                minDistance = distanceValue;
-            }
-            else if (minDistance > distanceValue) {
-                minDistance = distanceValue;
-            }
-            
 
             GameText g = new GameText(Integer.toString(distanceValue),
                     new Point2D(distanceLine.getStartX() + (distanceLine.getEndX() - distanceLine.getStartX()) / 2,
@@ -84,13 +78,5 @@ abstract class GameObject extends Group {
             distanceGroup.getChildren().addAll(distanceLine, g);
         }
         return distanceGroup;
-    }
-
-    public int getDistanceValue() {
-        return distanceValue;
-    }
-
-    public int getMinDistance() {
-        return minDistance;
     }
 }

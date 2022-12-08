@@ -1,13 +1,10 @@
 package com.project.a3;
 
-import java.util.Iterator;
 import java.util.concurrent.ThreadLocalRandom;
 
 import javafx.geometry.Point2D;
-import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Line;
 import javafx.scene.transform.Translate;
 
 class Cloud extends GameObject implements Updateable {
@@ -18,7 +15,7 @@ class Cloud extends GameObject implements Updateable {
             MIN_COLOR_VALUE) * PERCENT_VALUE;
     private static final String LABEL_FORMAT = "%.0f%%";
     private static final Color FONT_COLOR = Color.BLACK;
-    private static final Color DISTANCE_LINE_COLOR = Color.MAGENTA;
+    private static final Color CLOSEST_POND_DISTANCE_COLOR = Color.MAGENTA;
 
     private BezierOval circle;
     private GameText cloudLabel;
@@ -29,7 +26,7 @@ class Cloud extends GameObject implements Updateable {
     private double rand = ThreadLocalRandom.current().nextDouble(0.5, 2);
 
     Cloud(Point2D s, double size) {
-        circle = new BezierOval(new Point2D(s.getX(), s.getY()), size * 1.5, size, 0);
+        circle = new BezierOval(new Point2D(s.getX(), s.getY()), size * 1.2, size, 0);
         cloudColorValue = 0;
         percentage = cloudColorValue / MAX_COLOR_VALUE;
         percentage *= 100;
@@ -52,26 +49,26 @@ class Cloud extends GameObject implements Updateable {
         return new Point2D(circle.getCenterX(), circle.getCenterY());
     }
 
-    public Pond findClosestPond(Iterator<Node> iterator) {
-        min = (Pond) iterator.next();
+    public Pond findClosestPond(Ponds pondPane) {
+        min = (Pond) pondPane.getChildren().get(0);
+        min.setDistanceLineColor(CLOSEST_POND_DISTANCE_COLOR);
+        int dist1 = (int) (Math.sqrt(Math.pow(min.getCenter().getX() - getBoundsInParent().getCenterX(), 2))
+                + Math.sqrt(Math.pow(min.getCenter().getY() - getBoundsInParent().getCenterY(), 2)));
 
-        if (!getState().equals(inPlay)) {
-            return null;
-        }
-
-        while (iterator.hasNext()) {
-            Node p = iterator.next();
+        for (Node p : pondPane) {
             if (p instanceof Pond) {
                 if (getBoundsInParent().intersects(((Pond) p).getFillBounds().getBoundsInParent())) {
+                    int dist2 = (int) (Math
+                            .sqrt(Math.pow(((Pond) p).getCenter().getX() - getBoundsInParent().getCenterX(), 2))
+                            + Math.sqrt(Math.pow(((Pond) p).getCenter().getY() - getBoundsInParent().getCenterY(), 2)));
 
-                    // double slope1 = Math.abs(((Pond) p).getCenter().getY() - getBoundsInParent().getCenterY())
-                    //         / Math.abs(((Pond) p).getCenter().getX() - getBoundsInParent().getCenterX());
-
-                    // double slope2 = Math.abs(min.getCenter().getY() - getBoundsInParent().getCenterY())
-                    //         / Math.abs(min.getCenter().getX() - getBoundsInParent().getCenterX());
-
-                    if (slope1 >= slope2)
+                    if (dist1 > dist2) {
+                        min.setDistanceLineColor(Color.AZURE);
                         min = ((Pond) p);
+                        min.setDistanceLineColor(CLOSEST_POND_DISTANCE_COLOR);
+
+                    }
+
                 }
             }
         }
@@ -110,7 +107,7 @@ class Cloud extends GameObject implements Updateable {
     }
 
     public double getPercentageToPond() {
-        return getDistanceValue() / min.getFillBounds().getBoundsInLocal().getWidth();
+        return getBoundsInLocal().getCenterX() / min.getFillBounds().getBoundsInLocal().getWidth();
     }
 
     private void updateLabel(double val) {
@@ -123,6 +120,10 @@ class Cloud extends GameObject implements Updateable {
 
     public CloudState getState() {
         return state;
+    }
+
+    public CloudState getInPlayState() {
+        return inPlay;
     }
 
     public double getRand() {
