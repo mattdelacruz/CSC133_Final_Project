@@ -14,8 +14,8 @@ import javafx.scene.shape.Shape;
 public class BezierOval extends Group {
     private static final int MIN_CURVE_WIDTH = 30;
     private static final int MAX_CURVE_WIDTH = 50;
-    private static final int MIN_CURVE_HEIGHT = 20;
-    private static final int MAX_CURVE_HEIGHT = 45;
+    private static final int MIN_CURVE_HEIGHT = 15;
+    private static final int MAX_CURVE_HEIGHT = 25;
     private Ellipse ellipse;
     private Group cubicCurveGroup;
     private Point2D center;
@@ -30,10 +30,11 @@ public class BezierOval extends Group {
     }
 
     private void createCubicCurves(double startAngle) {
-        double cubicCurveStartX, cubicCurveStartY, cubicCurveControlX1, cubicCurveControlY1, cubicCurveEndX,
+        double cubicCurveStartX, cubicCurveStartY, cubicCurveControlX1, cubicCurveControlY1, cubicCurveControlX2,
+                cubicCurveControlY2, cubicCurveEndX,
                 cubicCurveEndY;
 
-        cubicCurveStartX = cubicCurveStartY = cubicCurveControlX1 = cubicCurveControlY1 = cubicCurveEndX = cubicCurveEndY = 0;
+        cubicCurveStartX = cubicCurveStartY = cubicCurveControlX1 = cubicCurveControlY1 = cubicCurveControlX2 = cubicCurveControlY2 = cubicCurveEndX = cubicCurveEndY = 0;
 
         double endAngle = startAngle + ThreadLocalRandom.current().nextDouble(MIN_CURVE_WIDTH, MAX_CURVE_WIDTH);
 
@@ -53,9 +54,9 @@ public class BezierOval extends Group {
                         - ThreadLocalRandom.current().nextDouble(MIN_CURVE_HEIGHT, MAX_CURVE_HEIGHT);
 
             } else {
-
                 cubicCurveControlY1 = cubicCurveStartY
                         + ThreadLocalRandom.current().nextDouble(MIN_CURVE_HEIGHT, MAX_CURVE_HEIGHT);
+
             }
 
             cubicCurveControlX1 = center.getX()

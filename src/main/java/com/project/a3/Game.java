@@ -92,13 +92,17 @@ class Game extends Pane implements Updateable {
             private void updateClosestPond(long now) {
                 for (Node c : cloudPane) {
                     if (c instanceof Cloud) {
-                        closest = ((Cloud) c).findClosestPond(pondPane.iterator());
-                        for (Node p : pondPane) {
-                            if (p instanceof Pond) {
-                                distanceLines.getChildren().add(((Cloud) c).createDistanceLine(((Pond) p)));
-                                if (((Cloud) c).getPercentage() > PERCENT_THRESHOLD &&
-                                        now % POND_UPDATE_TIME == 0) {
-                                    closest.update(((Cloud) c).getPercentageToPond());
+                        if (((Cloud) c).getState().equals(((Cloud) c).getInPlayState())) {
+                            for (Node p : pondPane) {
+                                if (p instanceof Pond) {
+                                    closest = ((Cloud) c).findClosestPond(pondPane);
+
+                                    distanceLines.getChildren().add(((Cloud) c).createDistanceLine(((Pond) p),
+                                            ((Pond) p).getDistanceLineColor()));
+                                    if (((Cloud) c).getPercentage() > PERCENT_THRESHOLD &&
+                                            now % POND_UPDATE_TIME == 0) {
+                                        closest.update(((Cloud) c).getPercentageToPond());
+                                    }
                                 }
                             }
                         }
@@ -111,10 +115,10 @@ class Game extends Pane implements Updateable {
             //
             // private static final Media blimpDroneMedia = new
             // Media(SoundPlayer.class.getResource("resources/AirshipDrone.mp3").toExternalForm());
-            //blimpSoundPlayer = new MediaPlayer(blimpDroneMedia);
-            //blimpSoundPlayer.setCycleCount(MediaPlayer.INDEFINITE);
-            //blimpSoundPlayer.setVolume(0);
-            //blimpSoundPLayer.play();
+            // blimpSoundPlayer = new MediaPlayer(blimpDroneMedia);
+            // blimpSoundPlayer.setCycleCount(MediaPlayer.INDEFINITE);
+            // blimpSoundPlayer.setVolume(0);
+            // blimpSoundPLayer.play();
             private void resetDistanceLines() {
                 distanceLines.getChildren().clear();
 
