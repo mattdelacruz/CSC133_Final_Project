@@ -29,14 +29,6 @@ class Clouds extends GameObjectPane<Cloud> implements Iterable<Node> {
         o.getState().removeFromWind(o, wind);
     }
 
-    // public void updateBoundingBox() {
-    // for (Node n : getChildren()) {
-    // if (n instanceof Cloud) {
-    // ((Cloud) n).updateBoundingBox();
-    // }
-    // }
-    // }
-
     public void move() {
         wind.updateWind();
     }

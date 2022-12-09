@@ -7,7 +7,7 @@ import javafx.scene.Node;
 import javafx.scene.paint.Color;
 import javafx.scene.transform.Translate;
 
-class Cloud extends GameObject implements Updateable {
+class Cloud extends TransientGameObject implements Updateable {
     private static final double MAX_COLOR_VALUE = 255;
     private static final double MIN_COLOR_VALUE = 155;
     private static final double PERCENT_VALUE = 0.01;
@@ -20,8 +20,6 @@ class Cloud extends GameObject implements Updateable {
     private BezierOval circle;
     private GameText cloudLabel;
     private Pond min;
-    private WindState state = new DeadWindState();
-    private WindState inPlay = new InPlayWindState();
     private double percentage, cloudColorValue;
     private double rand = ThreadLocalRandom.current().nextDouble(0.5, 2);
 
@@ -83,13 +81,6 @@ class Cloud extends GameObject implements Updateable {
         }
     }
 
-    public void move(Translate t) {
-        if (getBoundsInParent().getCenterX() > 0) {
-            setState(inPlay);
-        }
-        state.move(t, this);
-    }
-
     public void decrease() {
         if (cloudColorValue > 0) {
             cloudColorValue -= PERCENT_ADDER;
@@ -118,20 +109,8 @@ class Cloud extends GameObject implements Updateable {
         return Math.min(100.0, percentage);
     }
 
-    public WindState getState() {
-        return state;
-    }
-
-    public WindState getInPlayState() {
-        return inPlay;
-    }
-
     public double getRand() {
         return rand;
-    }
-
-    public void setState(WindState s) {
-        state = s;
     }
 
 }

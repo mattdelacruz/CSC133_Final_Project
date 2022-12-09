@@ -10,16 +10,14 @@ import javafx.scene.shape.CubicCurve;
 import javafx.scene.shape.Ellipse;
 import javafx.scene.transform.Translate;
 
-public class Blimp extends GameObject {
+public class Blimp extends TransientGameObject {
     private static final int CURVE_DISTANCE = 10;
     private static final Color BLIMP_STROKE = Color.RED;
     private static final Color BLIMP_FILL = Color.rgb(0, 0, 0, 0.5);
     private static final Color FONT_COLOR = Color.LEMONCHIFFON;
-
     private Group bezierCurves = new Group();
     private Ellipse ellipse;
-    private WindState state = new DeadWindState();
-    private WindState inPlay = new InPlayWindState();
+
     private GameText fuelLabel;
     private double rand = ThreadLocalRandom.current().nextDouble(0.5, 2);
     private int fuelRand = ThreadLocalRandom.current().nextInt(1000, 3000);
@@ -40,28 +38,12 @@ public class Blimp extends GameObject {
 
     }
 
-    public void setState(WindState s) {
-        state = s;
-    }
-
     private void updateLabel(int val) {
         fuelLabel.updateLabel(Integer.toString(val));
     }
 
-    public WindState getState() {
-        return state;
-    }
-
     public double getRand() {
         return rand;
-    }
-
-    public void move(Translate t) {
-        if (getBoundsInParent().getCenterX() > 0) {
-            setState(inPlay);
-        }
-
-        state.move(t, this);
     }
 
     private void createCurveGroup(int curveDistance) {
