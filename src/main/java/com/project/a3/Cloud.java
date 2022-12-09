@@ -5,9 +5,8 @@ import java.util.concurrent.ThreadLocalRandom;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.paint.Color;
-import javafx.scene.transform.Translate;
 
-class Cloud extends TransientGameObject implements Updateable {
+public class Cloud extends TransientGameObject implements Updateable {
     private static final double MAX_COLOR_VALUE = 255;
     private static final double MIN_COLOR_VALUE = 155;
     private static final double PERCENT_VALUE = 0.01;
@@ -64,9 +63,7 @@ class Cloud extends TransientGameObject implements Updateable {
                         min.setDistanceLineColor(Color.AZURE);
                         min = ((Pond) p);
                         min.setDistanceLineColor(CLOSEST_POND_DISTANCE_COLOR);
-
                     }
-
                 }
             }
         }

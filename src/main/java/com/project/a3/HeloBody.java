@@ -8,7 +8,7 @@ import javafx.scene.shape.ArcType;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
 
-class HeloBody extends GameObject {
+public class HeloBody extends GameObject {
         private static final int BLADE_BODY_WIDTH = 45;
         private static final int BLADE_BODY_HEIGHT = 10;
         private static final int PILOT_SEAT_RADIUS = 20;

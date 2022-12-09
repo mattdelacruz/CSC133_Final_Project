@@ -3,7 +3,7 @@ package com.project.a3;
 import java.util.Iterator;
 import javafx.scene.Node;
 
-class Ponds extends GameObjectPane<Pond> implements Iterable<Node> {
+public class Ponds extends GameObjectPane<Pond> implements Iterable<Node> {
     public void clear() {
         getChildren().clear();
     }

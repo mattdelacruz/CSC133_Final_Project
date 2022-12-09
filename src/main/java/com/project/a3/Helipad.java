@@ -6,7 +6,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 
-class Helipad extends GameObject {
+public class Helipad extends GameObject {
     private static final int GAP = 5;
     private static final Color HELIPAD_FILL = Color.BLACK;
 

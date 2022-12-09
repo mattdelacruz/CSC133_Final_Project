@@ -2,7 +2,7 @@ package com.project.a3;
 
 import javafx.scene.transform.Translate;
 
-abstract class TransientGameObject extends GameObject {
+public abstract class TransientGameObject extends GameObject {
     private WindState state = new DeadWindState();
     private WindState inPlay = new InPlayWindState();
 

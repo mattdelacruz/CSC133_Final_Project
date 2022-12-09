@@ -3,7 +3,7 @@ package com.project.a3;
 import java.util.Iterator;
 import javafx.scene.Node;
 
-class Clouds extends GameObjectPane<Cloud> implements Iterable<Node> {
+public class Clouds extends GameObjectPane<Cloud> implements Iterable<Node> {
     private Wind wind = new Wind();
 
     public void clear() {

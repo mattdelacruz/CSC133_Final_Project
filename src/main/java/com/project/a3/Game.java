@@ -20,7 +20,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.transform.Scale;
 
-class Game extends Pane implements Updateable {
+public class Game extends Pane implements Updateable {
     public static final int GAME_WIDTH = 800;
     public static final int GAME_HEIGHT = 800;
     private static final int HELI_RADIUS = GAME_WIDTH / 30;
@@ -33,7 +33,9 @@ class Game extends Pane implements Updateable {
     private static final int POND_UPDATE_TIME = 600;
     private static final int POND_SPAWN = 3;
     private static final int CLOUD_SPAWN = 5;
+    private static final int BLIMP_SPAWN = 5;
     private static final double PERCENT_THRESHOLD = 30.0;
+    private static final double FILL_THRESHOLD = 0.8;
     private static final Color HELIPAD_COLOR = Color.RED;
     private static final Color HELI_COLOR = Color.YELLOW;
     private static final Scale SCALE = new Scale(1, -1);
@@ -112,7 +114,6 @@ class Game extends Pane implements Updateable {
                         }
                     }
                 }
-
             }
 
             // loading a sound file
@@ -211,7 +212,7 @@ class Game extends Pane implements Updateable {
             createCloud();
         }
 
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < BLIMP_SPAWN; i++) {
             createBlimp();
         }
     }
@@ -247,7 +248,7 @@ class Game extends Pane implements Updateable {
             }
         }
 
-        if (currentCapacity / maxCapacity < .8) {
+        if (currentCapacity / maxCapacity < FILL_THRESHOLD) {
             return false;
         }
 
@@ -291,7 +292,6 @@ class Game extends Pane implements Updateable {
         double minX = POND_SIZE;
         double maxY = GAME_HEIGHT - POND_SIZE;
         double minY = helipad.getBoundsInParent().getMaxY() + POND_SIZE;
-
         Pond p;
         if (pondPane != null) {
             do {
@@ -300,7 +300,7 @@ class Game extends Pane implements Updateable {
                         ThreadLocalRandom.current().nextDouble(minY, maxY +
                                 1)),
                         POND_SIZE);
-            } while (checkObjectCollision(p));
+            } while (pondPane.checkObjectCollision(p));
         } else {
             p = new Pond(new Point2D(
                     ThreadLocalRandom.current().nextDouble(minX, maxX + 1),
@@ -322,7 +322,7 @@ class Game extends Pane implements Updateable {
                         ThreadLocalRandom.current().nextDouble(minX, maxX + 1),
                         ThreadLocalRandom.current().nextDouble(minY, maxY + 1)), CLOUD_SIZE);
 
-            } while (checkObjectCollision(c));
+            } while (cloudPane.checkObjectCollision(c));
         } else {
             c = new Cloud(new Point2D(
                     ThreadLocalRandom.current().nextDouble(minX, maxX + 1),
@@ -345,7 +345,7 @@ class Game extends Pane implements Updateable {
                 b = new Blimp(new Point2D(ThreadLocalRandom.current().nextDouble(minX, maxX + 1),
                         ThreadLocalRandom.current().nextDouble(minY, maxY + 1)),
                         new Point2D(BLIMP_SIZE * 2, BLIMP_SIZE / 2));
-            } while (checkObjectCollision(b));
+            } while (blimpPane.checkObjectCollision(b));
         } else {
             b = new Blimp(new Point2D(ThreadLocalRandom.current().nextDouble(minX, maxX + 1),
                     ThreadLocalRandom.current().nextDouble(minY, maxY + 1)),
@@ -356,33 +356,6 @@ class Game extends Pane implements Updateable {
         }
 
         blimpPane.add(b);
-    }
-
-    private boolean checkObjectCollision(GameObject o) {
-        if (o instanceof Pond) {
-            for (Node n : pondPane) {
-                if (n instanceof Pond) {
-                    if (o.intersects(((Pond) n).getBoundsInLocal()))
-                        return true;
-                }
-            }
-        } else if (o instanceof Cloud) {
-            for (Node n : cloudPane) {
-                if (n instanceof Cloud) {
-                    if (o.intersects(((Cloud) n).getBoundsInLocal()))
-                        return true;
-                }
-            }
-        } else if (o instanceof Blimp) {
-            for (Node n : blimpPane) {
-                if (n instanceof Blimp) {
-                    if (o.intersects(((Blimp) n).getBoundsInLocal()))
-                        return true;
-                }
-            }
-        }
-
-        return false;
     }
 
     public void handleMovement(KeyEvent e) {
@@ -422,28 +395,20 @@ class Game extends Pane implements Updateable {
 
         heli.showBoundingBox();
         helipad.showBoundingBox();
-        for (Node p : pondPane) {
-            if (p instanceof Pond)
-                ((Pond) p).showBoundingBox();
-        }
-        for (Node c : cloudPane) {
-            if (c instanceof Cloud)
-                ((Cloud) c).showBoundingBox();
-        }
-
-        for (Node b : blimpPane) {
-            if (b instanceof Blimp)
-                ((Blimp) b).showBoundingBox();
-        }
+        pondPane.showBoundingBox();
+        cloudPane.showBoundingBox();
+        blimpPane.showBoundingBox();
     }
 
     public void handleReset() {
         handleBoundBoxes();
+        isBoundsOn = false;
         getChildren().clear();
         getTransforms().clear();
         pondPane.clear();
         cloudPane.clear();
         blimpPane.clear();
+        System.gc();
         init();
     }
 
@@ -451,26 +416,12 @@ class Game extends Pane implements Updateable {
     public void update() {
         heli.moveHeli();
         heli.updateBoundingBox();
-
-        for (Node p : pondPane) {
-            if (p instanceof Pond)
-                ((Pond) p).updateBoundingBox();
-        }
-
-        for (Node c : cloudPane) {
-            if (c instanceof Cloud)
-                ((Cloud) c).updateBoundingBox();
-        }
-
-        for (Node b : blimpPane) {
-            if (b instanceof Blimp) {
-                ((Blimp) b).updateBoundingBox();
-            }
-        }
+        pondPane.updateBoundingBox();
+        cloudPane.updateBoundingBox();
+        blimpPane.updateBoundingBox();
         if (heli.isIgnitionOn()) {
             heli.consumeFuel();
         }
-
         cloudPane.move();
         blimpPane.move();
     }

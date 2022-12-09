@@ -9,7 +9,7 @@ import javafx.scene.layout.BackgroundSize;
 import javafx.scene.layout.Pane;
 import javafx.scene.transform.Scale;
 
-class GameBackground extends GameObject {
+public class GameBackground extends GameObject {
     private static final Scale SCALE = new Scale(1, -1);
     private static final String BACKGROUND_SOURCE = "https://live.staticflickr.com/3837/14337947499_b4599f5925_b.jpg";
 

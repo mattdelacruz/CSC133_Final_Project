@@ -2,7 +2,7 @@ package com.project.a3;
 
 import javafx.scene.transform.Translate;
 
-class DeadWindState implements WindState {
+public class DeadWindState implements WindState {
 
     @Override
     public void move(Translate t, GameObject c) {

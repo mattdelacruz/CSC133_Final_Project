@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 import javafx.scene.transform.Translate;
 
-class Wind implements WindSpeed {
+public class Wind implements WindSpeed {
     private static final double WIND_SPEED = 1;
     private ArrayList<GameObject> windBlowingOn = new ArrayList<GameObject>();
 

@@ -6,7 +6,7 @@ import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
 import javafx.scene.transform.Rotate;
 
-class HeloBlade extends GameObject {
+public class HeloBlade extends GameObject {
     private static final int BLADE_LENGTH = 150;
     private static final int BLADE_SIZE = 5;
     private static final int PIVOT_SIZE = 2;

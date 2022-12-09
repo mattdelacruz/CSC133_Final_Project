@@ -8,16 +8,15 @@ import javafx.scene.Node;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.CubicCurve;
 import javafx.scene.shape.Ellipse;
-import javafx.scene.transform.Translate;
 
 public class Blimp extends TransientGameObject {
     private static final int CURVE_DISTANCE = 10;
     private static final Color BLIMP_STROKE = Color.RED;
     private static final Color BLIMP_FILL = Color.rgb(0, 0, 0, 0.5);
     private static final Color FONT_COLOR = Color.LEMONCHIFFON;
+
     private Group bezierCurves = new Group();
     private Ellipse ellipse;
-
     private GameText fuelLabel;
     private double rand = ThreadLocalRandom.current().nextDouble(0.5, 2);
     private int fuelRand = ThreadLocalRandom.current().nextInt(1000, 3000);
@@ -56,10 +55,10 @@ public class Blimp extends TransientGameObject {
 
     private Node createCubicCurve(int height) {
         double cubicCurveStartX, cubicCurveStartY, cubicCurveControlX1, cubicCurveControlY1, cubicCurveControlX2,
-                cubicCurveControlY2, cubicCurveEndX,
+                cubicCurveEndX,
                 cubicCurveEndY;
 
-        cubicCurveStartX = cubicCurveStartY = cubicCurveControlX1 = cubicCurveControlY1 = cubicCurveControlX2 = cubicCurveControlY2 = cubicCurveEndX = cubicCurveEndY = 0;
+        cubicCurveStartX = cubicCurveStartY = cubicCurveControlX1 = cubicCurveControlY1 = cubicCurveControlX2 = cubicCurveEndX = cubicCurveEndY = 0;
 
         cubicCurveStartX = ellipse.getCenterX() - ellipse.getRadiusX();
         cubicCurveStartY = ellipse.getCenterY();
@@ -75,6 +74,5 @@ public class Blimp extends TransientGameObject {
         c.setStroke(BLIMP_STROKE);
         c.setFill(Color.TRANSPARENT);
         return c;
-
     }
 }
