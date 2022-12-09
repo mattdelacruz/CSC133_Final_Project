@@ -145,7 +145,7 @@ class Game extends Pane implements Updateable {
                 for (Node c : cloudPane) {
                     if (c instanceof Cloud) {
                         if (c.getBoundsInParent().intersects(bounds.getBoundsInLocal())) {
-                            ((Cloud) c).setState(new DeadCloudState());
+                            ((Cloud) c).setState(new DeadWindState());
                             toRemove.add((Cloud) c);
                         }
                     }

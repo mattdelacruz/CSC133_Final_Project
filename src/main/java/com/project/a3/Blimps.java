@@ -5,7 +5,7 @@ import java.util.Iterator;
 import javafx.scene.Node;
 
 public class Blimps extends GameObjectPane<Blimp> implements Iterable<Node> {
-    private CloudWind wind = new CloudWind();
+    private Wind wind = new Wind();
 
     public void clear() {
         getChildren().clear();

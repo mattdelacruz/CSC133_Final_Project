@@ -13,8 +13,8 @@ import javafx.scene.transform.Translate;
 public class Blimp extends GameObject {
     private Group bezierCurves = new Group();
     private Ellipse ellipse;
-    private CloudState state = new DeadCloudState();
-    private CloudState inPlay = new InPlayCloudState();
+    private WindState state = new DeadWindState();
+    private WindState inPlay = new InPlayWindState();
     private double rand = ThreadLocalRandom.current().nextDouble(0.5, 2);
 
     public Blimp(Point2D pos, Point2D radius) {
@@ -27,16 +27,16 @@ public class Blimp extends GameObject {
         for (int i = 0; i < 2; i++) {
             bezierCurves.getChildren().add(createCubicCurve());
         }
-        setState(new AliveCloudState());
+        setState(new AliveWindState());
         getChildren().addAll(ellipse, bezierCurves);
 
     }
 
-    public void setState(CloudState s) {
+    public void setState(WindState s) {
         state = s;
     }
 
-    public CloudState getState() {
+    public WindState getState() {
         return state;
     }
 

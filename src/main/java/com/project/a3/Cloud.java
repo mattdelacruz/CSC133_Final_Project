@@ -20,8 +20,8 @@ class Cloud extends GameObject implements Updateable {
     private BezierOval circle;
     private GameText cloudLabel;
     private Pond min;
-    private CloudState state = new DeadCloudState();
-    private CloudState inPlay = new InPlayCloudState();
+    private WindState state = new DeadWindState();
+    private WindState inPlay = new InPlayWindState();
     private double percentage, cloudColorValue;
     private double rand = ThreadLocalRandom.current().nextDouble(0.5, 2);
 
@@ -41,7 +41,7 @@ class Cloud extends GameObject implements Updateable {
                         circle.getCenterY() +
                                 (GameText.FONT_SIZE / 2)),
                 FONT_COLOR);
-        setState(new AliveCloudState());
+        setState(new AliveWindState());
         getChildren().addAll(circle, cloudLabel);
     }
 
@@ -118,11 +118,11 @@ class Cloud extends GameObject implements Updateable {
         return Math.min(100.0, percentage);
     }
 
-    public CloudState getState() {
+    public WindState getState() {
         return state;
     }
 
-    public CloudState getInPlayState() {
+    public WindState getInPlayState() {
         return inPlay;
     }
 
@@ -130,7 +130,7 @@ class Cloud extends GameObject implements Updateable {
         return rand;
     }
 
-    public void setState(CloudState s) {
+    public void setState(WindState s) {
         state = s;
     }
 
