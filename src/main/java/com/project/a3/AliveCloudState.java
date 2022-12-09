@@ -5,17 +5,17 @@ import javafx.scene.transform.Translate;
 class AliveCloudState implements CloudState {
 
     @Override
-    public void move(Translate t, Cloud c) {
+    public void move(Translate t, GameObject c) {
         c.getTransforms().add(t);
     }
 
     @Override
-    public void addToWind(Cloud c, CloudWind w) {
+    public void addToWind(GameObject c, CloudWind w) {
         w.attach(c);
     }
 
     @Override
-    public void removeFromWind(Cloud c, CloudWind w) {
+    public void removeFromWind(GameObject c, CloudWind w) {
         return;
     }
 }

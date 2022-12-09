@@ -6,22 +6,26 @@ import javafx.scene.transform.Translate;
 
 class CloudWind implements WindSpeed {
     private static final double WIND_SPEED = 1;
-    private ArrayList<Cloud> windBlowingOn = new ArrayList<Cloud>();
+    private ArrayList<GameObject> windBlowingOn = new ArrayList<GameObject>();
 
     @Override
-    public void attach(Cloud c) {
-        windBlowingOn.add(c);
+    public void attach(GameObject o) {
+        windBlowingOn.add(o);
     }
 
     @Override
-    public void detach(Cloud c) {
-        windBlowingOn.remove(c);
+    public void detach(GameObject o) {
+        windBlowingOn.remove(o);
     }
 
     @Override
     public void updateWind() {
-        for (Cloud c : windBlowingOn) {
-            c.move(new Translate(WIND_SPEED * c.getRand(), 0));
+        for (GameObject o : windBlowingOn) {
+            if (o instanceof Cloud)
+                ((Cloud) o).move(new Translate(WIND_SPEED * ((Cloud) o).getRand(), 0));
+            if (o instanceof Blimp) {
+                ((Blimp) o).move(new Translate(WIND_SPEED * ((Blimp) o).getRand(), 0));
+            }
         }
     }
 }
