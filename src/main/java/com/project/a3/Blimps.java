@@ -4,7 +4,8 @@ import java.util.Iterator;
 
 import javafx.scene.Node;
 
-public class Blimps extends GameObjectPane<Blimp> implements Iterable<Node>{
+public class Blimps extends GameObjectPane<Blimp> implements Iterable<Node> {
+    private Wind wind = new Wind();
 
     public void clear() {
         getChildren().clear();
@@ -20,8 +21,9 @@ public class Blimps extends GameObjectPane<Blimp> implements Iterable<Node>{
         o.getState().addToWind(o, wind);
     }
 
-    public State getState() {
-        return state;
+    public void move() {
+        wind.updateWind();
     }
-    
+
 }
+

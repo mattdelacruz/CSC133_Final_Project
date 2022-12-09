@@ -1,9 +1,9 @@
 package com.project.a3;
 
 interface WindSpeed {
-    public void attach(Cloud c);
+    public void attach(GameObject c);
 
-    public void detach(Cloud c);
+    public void detach(GameObject c);
 
     public void updateWind();
 }

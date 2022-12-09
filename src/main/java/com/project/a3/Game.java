@@ -43,6 +43,7 @@ class Game extends Pane implements Updateable {
     private Helipad helipad;
     private Ponds pondPane = new Ponds();
     private Clouds cloudPane = new Clouds();
+    private Blimps blimpPane = new Blimps();
     private Alert alert = new Alert(AlertType.CONFIRMATION);
     private ButtonType Yes = new ButtonType("Yes", ButtonData.YES);
     private ButtonType No = new ButtonType("No", ButtonData.NO);
@@ -144,7 +145,7 @@ class Game extends Pane implements Updateable {
                 for (Node c : cloudPane) {
                     if (c instanceof Cloud) {
                         if (c.getBoundsInParent().intersects(bounds.getBoundsInLocal())) {
-                            ((Cloud) c).setState(new DeadCloudState());
+                            ((Cloud) c).setState(new DeadWindState());
                             toRemove.add((Cloud) c);
                         }
                     }
@@ -166,7 +167,7 @@ class Game extends Pane implements Updateable {
         SCALE.setPivotY(GAME_HEIGHT / 2);
         getTransforms().add(SCALE);
         getChildren().addAll(background, helipad, pondPane,
-                cloudPane, heli, bounds, distanceLines);
+                cloudPane, blimpPane, heli, bounds, distanceLines);
     }
 
     private void createGameObjects() {
@@ -178,6 +179,10 @@ class Game extends Pane implements Updateable {
 
         for (int i = 0; i < CLOUD_SPAWN; i++) {
             createCloud();
+        }
+
+        for (int i = 0; i < 5; i++) {
+            createBlimp();
         }
     }
 
@@ -296,6 +301,26 @@ class Game extends Pane implements Updateable {
         cloudPane.add(c);
     }
 
+    private void createBlimp() {
+        double maxX = 0;
+        double minX = -GAME_WIDTH / 2;
+        double maxY = GAME_HEIGHT - (CLOUD_SIZE / 2);
+        double minY = helipad.getBoundsInParent().getMaxY() + CLOUD_SIZE;
+
+        Blimp b;
+
+        if (blimpPane != null) {
+            do {
+                b = new Blimp(new Point2D(ThreadLocalRandom.current().nextDouble(minX, maxX + 1),
+                        ThreadLocalRandom.current().nextDouble(minY, maxY + 1)), new Point2D(100, 50));
+            } while (checkObjectCollision(b));
+        } else {
+            b = new Blimp(new Point2D(ThreadLocalRandom.current().nextDouble(minX, maxX + 1),
+                    ThreadLocalRandom.current().nextDouble(minY, maxY + 1)), new Point2D(100, 50));
+        }
+        blimpPane.add(b);
+    }
+
     private boolean checkObjectCollision(GameObject o) {
         if (o instanceof Pond) {
             for (Node n : pondPane) {
@@ -308,6 +333,13 @@ class Game extends Pane implements Updateable {
             for (Node n : cloudPane) {
                 if (n instanceof Cloud) {
                     if (o.intersects(((Cloud) n).getBoundsInLocal()))
+                        return true;
+                }
+            }
+        } else if (o instanceof Blimp) {
+            for (Node n : blimpPane) {
+                if (n instanceof Blimp) {
+                    if (o.intersects(((Blimp) n).getBoundsInLocal()))
                         return true;
                 }
             }
@@ -356,6 +388,11 @@ class Game extends Pane implements Updateable {
             if (c instanceof Cloud)
                 ((Cloud) c).showBoundingBox();
         }
+
+        for (Node b : blimpPane) {
+            if (b instanceof Blimp)
+                ((Blimp) b).showBoundingBox();
+        }
     }
 
     public void handleReset() {
@@ -364,6 +401,7 @@ class Game extends Pane implements Updateable {
         getTransforms().clear();
         pondPane.clear();
         cloudPane.clear();
+        blimpPane.clear();
         init();
     }
 
@@ -381,11 +419,18 @@ class Game extends Pane implements Updateable {
             if (c instanceof Cloud)
                 ((Cloud) c).updateBoundingBox();
         }
+
+        for (Node b : blimpPane) {
+            if (b instanceof Blimp) {
+                ((Blimp) b).updateBoundingBox();
+            }
+        }
         if (heli.isIgnitionOn()) {
             heli.consumeFuel();
         }
 
         cloudPane.move();
+        blimpPane.move();
     }
 
     public void handleDistanceLines() {
