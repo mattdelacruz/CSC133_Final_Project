@@ -60,12 +60,15 @@ public class BezierOval extends Group {
             }
 
             cubicCurveControlX1 = center.getX()
-                    + ellipse.getRadiusX() * Math.cos(Math.toRadians(startAngle + ((endAngle - startAngle) / 2)));
+                    + ellipse.getRadiusX() * Math.cos(Math.toRadians(startAngle + ((endAngle - startAngle) / 2) - 10));
+
+            cubicCurveControlX2 = center.getX()
+                    + ellipse.getRadiusX() * Math.cos(Math.toRadians(startAngle + ((endAngle - startAngle) / 2) + 10));
 
             if (Math.abs(cubicCurveEndX - cubicCurveStartX) >= MIN_CURVE_WIDTH) {
                 cubicCurveGroup.getChildren()
                         .addAll(new CubicCurve(cubicCurveStartX, cubicCurveStartY, cubicCurveControlX1,
-                                cubicCurveControlY1, cubicCurveControlX1, cubicCurveControlY1, cubicCurveEndX,
+                                cubicCurveControlY1, cubicCurveControlX2, cubicCurveControlY1, cubicCurveEndX,
                                 cubicCurveEndY));
             }
             createCubicCurves(endAngle);

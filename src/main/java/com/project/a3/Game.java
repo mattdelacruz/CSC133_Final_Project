@@ -27,6 +27,7 @@ class Game extends Pane implements Updateable {
     private static final int START_FUEL = 250000;
     private static final int POND_SIZE = GAME_WIDTH / 10;
     private static final int CLOUD_SIZE = GAME_WIDTH / 15;
+    private static final int BLIMP_SIZE = GAME_WIDTH / 15;
     private static final int HELIPAD_SIZE = GAME_WIDTH / 5;
     private static final int CLOUD_DECAY_TIME = 2500;
     private static final int POND_UPDATE_TIME = 600;
@@ -68,7 +69,9 @@ class Game extends Pane implements Updateable {
             public void handle(long now) {
                 update();
                 checkCloudOutOfBounds();
-                checkNumCloudsOnScreen();
+                checkBlimpOutOfBounds();
+                checkCloudsOnScreen();
+                checkBlimpsOnScreen();
                 decreaseClouds(now);
                 resetDistanceLines();
                 updateClosestPond(now);
@@ -128,7 +131,7 @@ class Game extends Pane implements Updateable {
                 }
             }
 
-            private void checkNumCloudsOnScreen() {
+            private void checkCloudsOnScreen() {
                 int dice = ThreadLocalRandom.current().nextInt(0, 1);
                 if (cloudPane.size() <= 2) {
                     createCloud();
@@ -137,6 +140,18 @@ class Game extends Pane implements Updateable {
                 if (cloudPane.size() == 3 || cloudPane.size() == 4 &&
                         dice == 1) {
                     createCloud();
+                }
+            }
+
+            private void checkBlimpsOnScreen() {
+                int dice = ThreadLocalRandom.current().nextInt(0, 1);
+                if (blimpPane.size() <= 2) {
+                    createBlimp();
+                }
+
+                if (blimpPane.size() == 3 || blimpPane.size() == 4 &&
+                        dice == 1) {
+                    createBlimp();
                 }
             }
 
@@ -152,6 +167,21 @@ class Game extends Pane implements Updateable {
                 }
                 for (Cloud c : toRemove) {
                     cloudPane.remove(c);
+                }
+            }
+
+            private void checkBlimpOutOfBounds() {
+                ArrayList<Blimp> toRemove = new ArrayList<Blimp>();
+                for (Node b : blimpPane) {
+                    if (b instanceof Blimp) {
+                        if (b.getBoundsInParent().intersects(bounds.getBoundsInLocal())) {
+                            ((Blimp) b).setState(new DeadWindState());
+                            toRemove.add((Blimp) b);
+                        }
+                    }
+                }
+                for (Blimp b : toRemove) {
+                    blimpPane.remove(b);
                 }
             }
         };
@@ -298,26 +328,33 @@ class Game extends Pane implements Updateable {
                     ThreadLocalRandom.current().nextDouble(minX, maxX + 1),
                     ThreadLocalRandom.current().nextDouble(minY, maxY + 1)), CLOUD_SIZE);
         }
+        if (isBoundsOn) {
+            c.showBoundingBox();
+        }
         cloudPane.add(c);
     }
 
     private void createBlimp() {
         double maxX = 0;
         double minX = -GAME_WIDTH / 2;
-        double maxY = GAME_HEIGHT - (CLOUD_SIZE / 2);
-        double minY = helipad.getBoundsInParent().getMaxY() + CLOUD_SIZE;
-
+        double maxY = GAME_HEIGHT - (BLIMP_SIZE / 2);
+        double minY = helipad.getBoundsInParent().getMaxY() + BLIMP_SIZE;
         Blimp b;
-
         if (blimpPane != null) {
             do {
                 b = new Blimp(new Point2D(ThreadLocalRandom.current().nextDouble(minX, maxX + 1),
-                        ThreadLocalRandom.current().nextDouble(minY, maxY + 1)), new Point2D(100, 50));
+                        ThreadLocalRandom.current().nextDouble(minY, maxY + 1)),
+                        new Point2D(BLIMP_SIZE * 2, BLIMP_SIZE / 2));
             } while (checkObjectCollision(b));
         } else {
             b = new Blimp(new Point2D(ThreadLocalRandom.current().nextDouble(minX, maxX + 1),
-                    ThreadLocalRandom.current().nextDouble(minY, maxY + 1)), new Point2D(100, 50));
+                    ThreadLocalRandom.current().nextDouble(minY, maxY + 1)),
+                    new Point2D(BLIMP_SIZE * 2, BLIMP_SIZE / 2));
         }
+        if (isBoundsOn) {
+            b.showBoundingBox();
+        }
+
         blimpPane.add(b);
     }
 
@@ -378,6 +415,11 @@ class Game extends Pane implements Updateable {
     }
 
     public void handleBoundBoxes() {
+        if (!isBoundsOn)
+            isBoundsOn = true;
+        else
+            isBoundsOn = false;
+
         heli.showBoundingBox();
         helipad.showBoundingBox();
         for (Node p : pondPane) {
