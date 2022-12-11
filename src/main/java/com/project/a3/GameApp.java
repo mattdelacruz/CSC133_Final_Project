@@ -36,6 +36,7 @@ public class GameApp extends Application {
             }
             if (e.getCode() == KeyCode.SPACE) {
                 root.handleSeeding();
+                root.handleRefueling();
             }
             if (e.getCode() == KeyCode.D) {
                 root.handleDistanceLines();

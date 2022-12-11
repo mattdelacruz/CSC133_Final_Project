@@ -111,4 +111,8 @@ public class Helicopter extends GameObject {
         return fuelValue;
     }
 
+    public void setFuel(int f) {
+        fuelValue = f;
+    }
+
 }

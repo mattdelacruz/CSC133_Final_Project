@@ -2,6 +2,8 @@ package com.project.a3;
 
 import java.util.ArrayList;
 import java.util.Optional;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.ThreadLocalRandom;
 
 import javafx.animation.AnimationTimer;
@@ -34,6 +36,8 @@ public class Game extends Pane implements Updateable {
     private static final int POND_SPAWN = 3;
     private static final int CLOUD_SPAWN = 5;
     private static final int BLIMP_SPAWN = 5;
+    private static final int REFUEL_VALUE = 1000;
+    private static final double BLIMP_SPEED_RANGE = 0.3;
     private static final double PERCENT_THRESHOLD = 30.0;
     private static final double FILL_THRESHOLD = 0.8;
     private static final Color HELIPAD_COLOR = Color.RED;
@@ -383,6 +387,42 @@ public class Game extends Pane implements Updateable {
         }
     }
 
+    public void handleRefueling() {
+        Timer t = new Timer();
+        for (Node b : blimpPane) {
+            if (b instanceof Blimp) {
+                if (heli.getBoundsInParent().intersects(b.getBoundsInParent()) && heli.getState().isIgnitionOn()
+                        && ((Blimp) b).getFuel() > 0 && heli.getSpeed() >= ((Blimp) b).getSpeed() - BLIMP_SPEED_RANGE
+                        && heli.getSpeed() <= ((Blimp) b).getSpeed() + BLIMP_SPEED_RANGE) {
+
+                    {
+                        Platform.runLater(new Runnable() {
+                            @Override
+                            public void run() {
+                                t.schedule(new TimerTask() {
+
+                                    @Override
+                                    public void run() {
+
+                                        if (((Blimp) b).getFuel() < REFUEL_VALUE) {
+                                            heli.setFuel(heli.getFuel() + ((Blimp) b).getFuel());
+                                            ((Blimp) b).setFuel(((Blimp) b).getFuel() - ((Blimp) b).getFuel());
+                                        } else {
+                                            ((Blimp) b).setFuel(((Blimp) b).getFuel() - REFUEL_VALUE);
+                                            heli.setFuel(heli.getFuel() + REFUEL_VALUE);
+                                        }
+                                    };
+                                }, 0, 500);
+                            }
+                        });
+
+                    }
+
+                }
+            }
+        }
+    }
+
     public void handleIgnition() {
         heli.engineStart();
     }
@@ -435,4 +475,5 @@ public class Game extends Pane implements Updateable {
             isDistanceLinesOn = true;
         }
     }
+
 }

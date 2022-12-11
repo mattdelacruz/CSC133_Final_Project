@@ -3,7 +3,7 @@ package com.project.a3;
 import javafx.scene.Node;
 import javafx.scene.layout.Pane;
 
-public class GameObjectPane<T> extends Pane {
+abstract class GameObjectPane<T> extends Pane {
     public void add(Node o) {
         getChildren().add(o);
     }

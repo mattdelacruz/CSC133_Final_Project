@@ -19,12 +19,14 @@ public class Blimp extends TransientGameObject {
     private Ellipse ellipse;
     private GameText fuelLabel;
     private double rand = ThreadLocalRandom.current().nextDouble(0.5, 2);
-    private int fuelRand = ThreadLocalRandom.current().nextInt(1000, 3000);
+    private int fuel;
+    private double speed;
 
     public Blimp(Point2D pos, Point2D radius) {
-
+        int randFuel = ThreadLocalRandom.current().nextInt(5000, 10000);
+        fuel = randFuel;
         ellipse = new Ellipse(pos.getX(), pos.getY(), radius.getX(), radius.getY());
-        fuelLabel = createLabel(Integer.toString(fuelRand),
+        fuelLabel = createLabel(Integer.toString(randFuel),
                 new Point2D(ellipse.getCenterX() - (GameText.FONT_SIZE / 2),
                         ellipse.getCenterY() + (GameText.FONT_SIZE / 2)),
                 FONT_COLOR);
@@ -41,8 +43,25 @@ public class Blimp extends TransientGameObject {
         fuelLabel.updateLabel(Integer.toString(val));
     }
 
+    public void setSpeed(double s) {
+        speed = s;
+    }
+
+    public double getSpeed() {
+        return speed;
+    }
+
     public double getRand() {
         return rand;
+    }
+
+    public void setFuel(int f) {
+        fuel = f;
+        updateLabel(f);
+    }
+
+    public int getFuel() {
+        return fuel;
     }
 
     private void createCurveGroup(int curveDistance) {
