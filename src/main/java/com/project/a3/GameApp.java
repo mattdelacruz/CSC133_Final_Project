@@ -1,6 +1,7 @@
 package com.project.a3;
 
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyCode;
 import javafx.stage.Stage;
@@ -37,6 +38,7 @@ public class GameApp extends Application {
             if (e.getCode() == KeyCode.SPACE) {
                 root.handleSeeding();
                 root.handleRefueling();
+
             }
             if (e.getCode() == KeyCode.D) {
                 root.handleDistanceLines();

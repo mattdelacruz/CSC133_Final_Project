@@ -222,7 +222,6 @@ public class Game extends Pane implements Updateable {
 
     private void getEndResult() {
         Platform.runLater(() -> {
-
             Optional<ButtonType> result = alert.showAndWait();
             if (result.isPresent() && result.get() == Yes) {
                 handleReset();
@@ -389,34 +388,36 @@ public class Game extends Pane implements Updateable {
     }
 
     public void handleRefueling() {
-        new Timer().schedule(
-                new TimerTask() {
-                    @Override
-                    public void run() {
-                        Platform.runLater(() -> {
-                            for (Node b : blimpPane) {
-                                if (b instanceof Blimp) {
-                                    if (heli.getBoundsInParent().intersects(b.getBoundsInParent())
-                                            && heli.getState().isIgnitionOn()
-                                            && ((Blimp) b).getFuel() > 0
-                                            && heli.getSpeed() >= ((Blimp) b).getSpeed() - BLIMP_SPEED_RANGE
-                                            && heli.getSpeed() <= ((Blimp) b).getSpeed() + BLIMP_SPEED_RANGE) {
+        for (Node b : blimpPane) {
+            if (b instanceof Blimp) {
+                if (checkBlimpConditions((Blimp) b)) {
+                    if (checkIfEnoughBlimpFuel((Blimp) b)) {
+                        heli.setFuel(heli.getFuel() + ((Blimp) b).getFuel());
+                        ((Blimp) b).setFuel(
+                                ((Blimp) b).getFuel() - ((Blimp) b).getFuel());
 
-                                        if (((Blimp) b).getFuel() < REFUEL_VALUE) {
-                                            heli.setFuel(heli.getFuel() + ((Blimp) b).getFuel());
-                                            ((Blimp) b).setFuel(
-                                                    ((Blimp) b).getFuel() - ((Blimp) b).getFuel());
-                                        } else {
-                                            ((Blimp) b)
-                                                    .setFuel(((Blimp) b).getFuel() - REFUEL_VALUE);
-                                            heli.setFuel(heli.getFuel() + REFUEL_VALUE);
-                                        }
-                                    }
-                                }
-                            }
-                        });
+                    } else {
+                        ((Blimp) b)
+                                .setFuel(((Blimp) b).getFuel() - REFUEL_VALUE);
+                        heli.setFuel(heli.getFuel() + REFUEL_VALUE);
+
                     }
-                }, 0, 2000);
+
+                }
+            }
+        }
+    }
+
+    public boolean checkIfEnoughBlimpFuel(Blimp b) {
+        return b.getFuel() < REFUEL_VALUE;
+    }
+
+    public boolean checkBlimpConditions(Blimp b) {
+        return heli.getBoundsInParent().intersects(b.getBoundsInParent())
+                && heli.getState().isIgnitionOn()
+                && b.getFuel() > 0
+                && heli.getSpeed() >= b.getSpeed() - BLIMP_SPEED_RANGE
+                && heli.getSpeed() <= b.getSpeed() + BLIMP_SPEED_RANGE;
     }
 
     public void handleIgnition() {
