@@ -1,10 +1,13 @@
 package com.project.a3;
 
+import javafx.animation.PauseTransition;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyCode;
 import javafx.stage.Stage;
+import javafx.util.Duration;
+
 import java.io.IOException;
 
 public class GameApp extends Application {
@@ -15,6 +18,7 @@ public class GameApp extends Application {
     public void start(Stage stage) throws IOException {
 
         Game root = new Game();
+        PauseTransition pause = new PauseTransition(Duration.seconds(0.5));
         scene = new Scene(root, Game.GAME_WIDTH, Game.GAME_HEIGHT);
 
         stage.setScene(scene);
@@ -37,7 +41,11 @@ public class GameApp extends Application {
             }
             if (e.getCode() == KeyCode.SPACE) {
                 root.handleSeeding();
-                root.handleRefueling();
+                pause.setOnFinished(event -> {
+                    root.handleRefueling();
+
+                });
+                pause.play();
 
             }
             if (e.getCode() == KeyCode.D) {

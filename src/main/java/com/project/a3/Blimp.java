@@ -14,6 +14,9 @@ public class Blimp extends TransientGameObject {
     private static final Color BLIMP_STROKE = Color.RED;
     private static final Color BLIMP_FILL = Color.rgb(0, 0, 0, 0.5);
     private static final Color FONT_COLOR = Color.LEMONCHIFFON;
+    private static final int MIN_FUEL = 5000;
+    private static final int MAX_FUEL = 10000;
+
 
     private Group bezierCurves = new Group();
     private Ellipse ellipse;
@@ -23,10 +26,9 @@ public class Blimp extends TransientGameObject {
     private double speed;
 
     public Blimp(Point2D pos, Point2D radius) {
-        int randFuel = ThreadLocalRandom.current().nextInt(5000, 10000);
-        fuel = randFuel;
+        fuel = ThreadLocalRandom.current().nextInt(MIN_FUEL, MAX_FUEL);
         ellipse = new Ellipse(pos.getX(), pos.getY(), radius.getX(), radius.getY());
-        fuelLabel = createLabel(Integer.toString(randFuel),
+        fuelLabel = createLabel(Integer.toString(fuel),
                 new Point2D(ellipse.getCenterX() - (GameText.FONT_SIZE / 2),
                         ellipse.getCenterY() + (GameText.FONT_SIZE / 2)),
                 FONT_COLOR);

@@ -7,6 +7,7 @@ import java.util.TimerTask;
 import java.util.concurrent.ThreadLocalRandom;
 
 import javafx.animation.AnimationTimer;
+import javafx.animation.PauseTransition;
 import javafx.application.Platform;
 import javafx.geometry.Point2D;
 import javafx.scene.Group;
@@ -21,6 +22,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.transform.Scale;
+import javafx.util.Duration;
 
 public class Game extends Pane implements Updateable {
     public static final int GAME_WIDTH = 800;
@@ -229,7 +231,6 @@ public class Game extends Pane implements Updateable {
             } else if (result.isPresent() && result.get() == No) {
                 Platform.exit();
             }
-
         });
     }
 
@@ -395,14 +396,11 @@ public class Game extends Pane implements Updateable {
                         heli.setFuel(heli.getFuel() + ((Blimp) b).getFuel());
                         ((Blimp) b).setFuel(
                                 ((Blimp) b).getFuel() - ((Blimp) b).getFuel());
-
                     } else {
                         ((Blimp) b)
                                 .setFuel(((Blimp) b).getFuel() - REFUEL_VALUE);
                         heli.setFuel(heli.getFuel() + REFUEL_VALUE);
-
                     }
-
                 }
             }
         }
