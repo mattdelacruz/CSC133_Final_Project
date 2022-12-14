@@ -6,7 +6,7 @@ import javafx.geometry.Point2D;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
-class Pond extends GameObject {
+public class Pond extends GameObject {
     private static final Color POND_COLOR = Color.BLUE;
     private static final Color FONT_COLOR = Color.WHITE;
     private static final double PERCENT_VALUE = 0.01;

@@ -31,10 +31,10 @@ public class BezierOval extends Group {
 
     private void createCubicCurves(double startAngle) {
         double cubicCurveStartX, cubicCurveStartY, cubicCurveControlX1, cubicCurveControlY1, cubicCurveControlX2,
-                cubicCurveControlY2, cubicCurveEndX,
+                cubicCurveEndX,
                 cubicCurveEndY;
 
-        cubicCurveStartX = cubicCurveStartY = cubicCurveControlX1 = cubicCurveControlY1 = cubicCurveControlX2 = cubicCurveControlY2 = cubicCurveEndX = cubicCurveEndY = 0;
+        cubicCurveStartX = cubicCurveStartY = cubicCurveControlX1 = cubicCurveControlY1 = cubicCurveControlX2 = cubicCurveEndX = cubicCurveEndY = 0;
 
         double endAngle = startAngle + ThreadLocalRandom.current().nextDouble(MIN_CURVE_WIDTH, MAX_CURVE_WIDTH);
 
@@ -56,16 +56,18 @@ public class BezierOval extends Group {
             } else {
                 cubicCurveControlY1 = cubicCurveStartY
                         + ThreadLocalRandom.current().nextDouble(MIN_CURVE_HEIGHT, MAX_CURVE_HEIGHT);
-
             }
 
             cubicCurveControlX1 = center.getX()
-                    + ellipse.getRadiusX() * Math.cos(Math.toRadians(startAngle + ((endAngle - startAngle) / 2)));
+                    + ellipse.getRadiusX() * Math.cos(Math.toRadians(startAngle + ((endAngle - startAngle) / 2) - 10));
+
+            cubicCurveControlX2 = center.getX()
+                    + ellipse.getRadiusX() * Math.cos(Math.toRadians(startAngle + ((endAngle - startAngle) / 2) + 10));
 
             if (Math.abs(cubicCurveEndX - cubicCurveStartX) >= MIN_CURVE_WIDTH) {
                 cubicCurveGroup.getChildren()
                         .addAll(new CubicCurve(cubicCurveStartX, cubicCurveStartY, cubicCurveControlX1,
-                                cubicCurveControlY1, cubicCurveControlX1, cubicCurveControlY1, cubicCurveEndX,
+                                cubicCurveControlY1, cubicCurveControlX2, cubicCurveControlY1, cubicCurveEndX,
                                 cubicCurveEndY));
             }
             createCubicCurves(endAngle);

@@ -1,6 +1,6 @@
 package com.project.a3;
 
-class HelicopterStoppingState implements HelicopterState {
+public class HelicopterStoppingState implements HelicopterState {
 
     @Override
     public boolean isIgnitionOn() {

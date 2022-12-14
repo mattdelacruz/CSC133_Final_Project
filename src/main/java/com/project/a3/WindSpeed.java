@@ -1,6 +1,6 @@
 package com.project.a3;
 
-interface WindSpeed {
+public interface WindSpeed {
     public void attach(GameObject c);
 
     public void detach(GameObject c);

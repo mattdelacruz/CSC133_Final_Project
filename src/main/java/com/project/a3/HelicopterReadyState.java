@@ -2,7 +2,7 @@ package com.project.a3;
 
 import javafx.scene.transform.Translate;
 
-class HelicopterReadyState implements HelicopterState {
+public class HelicopterReadyState implements HelicopterState {
 
     @Override
     public boolean isIgnitionOn() {

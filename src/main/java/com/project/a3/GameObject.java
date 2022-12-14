@@ -6,7 +6,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
 
-abstract class GameObject extends Group {
+public abstract class GameObject extends Group {
     private static final Color BOUND_FILL = Color.TRANSPARENT;
     private static final Color BOUND_STROKE = Color.YELLOW;
 

@@ -8,7 +8,7 @@ import javafx.scene.text.FontWeight;
 import javafx.scene.transform.Scale;
 import javafx.scene.transform.Translate;
 
-class GameText extends GameObject {
+public class GameText extends GameObject {
     private static final Scale SCALE = new Scale(1, -1);
     private static final FontWeight FONT_WEIGHT = FontWeight.NORMAL;
     private static final String FONT_FAMILY = "Arial";

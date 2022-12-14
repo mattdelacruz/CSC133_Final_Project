@@ -1,6 +1,6 @@
 package com.project.a3;
 
-interface HelicopterState {
+public interface HelicopterState {
 
     public boolean isIgnitionOn();
 

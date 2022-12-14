@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 import javafx.scene.transform.Translate;
 
-class Wind implements WindSpeed {
+public class Wind implements WindSpeed {
     private static final double WIND_SPEED = 1;
     private ArrayList<GameObject> windBlowingOn = new ArrayList<GameObject>();
 
@@ -21,10 +21,12 @@ class Wind implements WindSpeed {
     @Override
     public void updateWind() {
         for (GameObject o : windBlowingOn) {
-            if (o instanceof Cloud)
+            if (o instanceof Cloud) {
                 ((Cloud) o).move(new Translate(WIND_SPEED * ((Cloud) o).getRand(), 0));
+            }
             if (o instanceof Blimp) {
-                ((Blimp) o).move(new Translate(WIND_SPEED * ((Blimp) o).getRand(), 0));
+                ((Blimp) o).setSpeed(WIND_SPEED * ((Blimp) o).getRand());
+                ((Blimp) o).move(new Translate(((Blimp) o).getSpeed(), 0));
             }
         }
     }

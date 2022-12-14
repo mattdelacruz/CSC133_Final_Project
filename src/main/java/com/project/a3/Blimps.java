@@ -25,5 +25,8 @@ public class Blimps extends GameObjectPane<Blimp> implements Iterable<Node> {
         wind.updateWind();
     }
 
-}
+    public int size() {
+        return getChildren().size();
+    }
 
+}

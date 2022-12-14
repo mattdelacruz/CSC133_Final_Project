@@ -1,11 +1,10 @@
 package com.project.a3;
 
 import javafx.geometry.Point2D;
-import javafx.scene.Group;
 import javafx.scene.paint.Color;
 import javafx.scene.transform.Rotate;
 
-class Helicopter extends GameObject {
+public class Helicopter extends GameObject {
     private static final int ROTATION_ANGLE = 15;
     private static final int FUEL_CONSUMPTION = 1;
     public static final int MAX_SPEED = 10;
@@ -110,6 +109,10 @@ class Helicopter extends GameObject {
 
     public int getFuel() {
         return fuelValue;
+    }
+
+    public void setFuel(int f) {
+        fuelValue = f;
     }
 
 }
