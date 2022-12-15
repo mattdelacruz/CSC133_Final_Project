@@ -101,20 +101,38 @@ public class Game extends Pane implements Updateable {
             }
 
             private void updateClosestPond(long now) {
+                // for (Node c : cloudPane) {
+                // if (c instanceof Cloud) {
+                // if (((Cloud) c).getState().equals(((Cloud) c).getInPlayState())) {
+                // for (Node p : pondPane) {
+                // if (p instanceof Pond) {
+                // closest = ((Cloud) c).findClosestPond(pondPane);
+
+                // distanceLines.getChildren().add(((Cloud) c).createDistanceLine(((Pond) p),
+                // ((Pond) p).getDistanceLineColor()));
+                // if (((Cloud) c).getPercentage() > PERCENT_THRESHOLD &&
+                // now % POND_UPDATE_TIME == 0) {
+                // closest.update(((Cloud) c).getPercentageToPond());
+                // }
+                // }
+                // }
+                // }
+                // }
+                // }
+                distanceLines.getChildren().clear();
+                for (Node c : cloudPane) {
+                    if (c instanceof Cloud) {
+                        ((Cloud) c).findClosestPond(pondPane);
+                    }
+                }
+
                 for (Node c : cloudPane) {
                     if (c instanceof Cloud) {
                         if (((Cloud) c).getState().equals(((Cloud) c).getInPlayState())) {
-                            for (Node p : pondPane) {
-                                if (p instanceof Pond) {
-                                    closest = ((Cloud) c).findClosestPond(pondPane);
+                            distanceLines.getChildren().add(((Cloud) c).createDistanceLines());
 
-                                    distanceLines.getChildren().add(((Cloud) c).createDistanceLine(((Pond) p),
-                                            ((Pond) p).getDistanceLineColor()));
-                                    if (((Cloud) c).getPercentage() > PERCENT_THRESHOLD &&
-                                            now % POND_UPDATE_TIME == 0) {
-                                        closest.update(((Cloud) c).getPercentageToPond());
-                                    }
-                                }
+                            if (((Cloud) c).getPercentage() > PERCENT_THRESHOLD && now % POND_UPDATE_TIME == 0) {
+                                ((Cloud) c).updateClosestPonds();
                             }
                         }
                     }
@@ -391,8 +409,12 @@ public class Game extends Pane implements Updateable {
     public void handleRefueling() {
         for (Node b : blimpPane) {
             if (b instanceof Blimp) {
-                if (checkBlimpConditions((Blimp) b)) {
-                    if (checkIfEnoughBlimpFuel((Blimp) b)) {
+                if (heli.getBoundsInParent().intersects(b.getBoundsInParent())
+                        && heli.getState().isIgnitionOn()
+                        && ((Blimp) b).getFuel() > 0
+                        && heli.getSpeed() >= ((Blimp) b).getSpeed() - BLIMP_SPEED_RANGE
+                        && heli.getSpeed() <= ((Blimp) b).getSpeed() + BLIMP_SPEED_RANGE) {
+                    if (((Blimp) b).getFuel() < REFUEL_VALUE) {
                         heli.setFuel(heli.getFuel() + ((Blimp) b).getFuel());
                         ((Blimp) b).setFuel(
                                 ((Blimp) b).getFuel() - ((Blimp) b).getFuel());
@@ -404,18 +426,6 @@ public class Game extends Pane implements Updateable {
                 }
             }
         }
-    }
-
-    public boolean checkIfEnoughBlimpFuel(Blimp b) {
-        return b.getFuel() < REFUEL_VALUE;
-    }
-
-    public boolean checkBlimpConditions(Blimp b) {
-        return heli.getBoundsInParent().intersects(b.getBoundsInParent())
-                && heli.getState().isIgnitionOn()
-                && b.getFuel() > 0
-                && heli.getSpeed() >= b.getSpeed() - BLIMP_SPEED_RANGE
-                && heli.getSpeed() <= b.getSpeed() + BLIMP_SPEED_RANGE;
     }
 
     public void handleIgnition() {

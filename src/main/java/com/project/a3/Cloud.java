@@ -1,10 +1,15 @@
 package com.project.a3;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.ThreadLocalRandom;
 
 import javafx.geometry.Point2D;
+import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Line;
 
 public class Cloud extends TransientGameObject implements Updateable {
     private static final double MAX_COLOR_VALUE = 255;
@@ -15,10 +20,13 @@ public class Cloud extends TransientGameObject implements Updateable {
     private static final String LABEL_FORMAT = "%.0f%%";
     private static final Color FONT_COLOR = Color.BLACK;
     private static final Color CLOSEST_POND_DISTANCE_COLOR = Color.MAGENTA;
+    private static final Color FARTHEST_POND_DISTANCE_COLOR = Color.AZURE;
 
     private BezierOval circle;
     private GameText cloudLabel;
-    private Pond min;
+    private ArrayList<Pond> closest = new ArrayList<Pond>();
+    private ArrayList<Pond> farthest = new ArrayList<Pond>();
+    private Map<Pond, Integer> distanceToPond = new HashMap<Pond, Integer>();
     private double percentage, cloudColorValue;
     private double rand = ThreadLocalRandom.current().nextDouble(0.5, 2);
 
@@ -46,29 +54,34 @@ public class Cloud extends TransientGameObject implements Updateable {
         return new Point2D(circle.getCenterX(), circle.getCenterY());
     }
 
-    public Pond findClosestPond(Ponds pondPane) {
-        min = (Pond) pondPane.getChildren().get(0);
-        min.setDistanceLineColor(CLOSEST_POND_DISTANCE_COLOR);
-        int dist1 = (int) (Math.sqrt(Math.pow(min.getCenter().getX() - getBoundsInParent().getCenterX(), 2))
-                + Math.sqrt(Math.pow(min.getCenter().getY() - getBoundsInParent().getCenterY(), 2)));
+    // public Pond findClosestPond(Ponds pondPane) {
+    // min = (Pond) pondPane.getChildren().get(0);
+    // min.setDistanceLineColor(CLOSEST_POND_DISTANCE_COLOR);
+    // int dist1 = (int) (Math.sqrt(Math.pow(min.getCenter().getX() -
+    // getBoundsInParent().getCenterX(), 2))
+    // + Math.sqrt(Math.pow(min.getCenter().getY() -
+    // getBoundsInParent().getCenterY(), 2)));
 
-        for (Node p : pondPane) {
-            if (p instanceof Pond) {
-                if (getBoundsInParent().intersects(((Pond) p).getFillBounds().getBoundsInParent())) {
-                    int dist2 = (int) (Math
-                            .sqrt(Math.pow(((Pond) p).getCenter().getX() - getBoundsInParent().getCenterX(), 2))
-                            + Math.sqrt(Math.pow(((Pond) p).getCenter().getY() - getBoundsInParent().getCenterY(), 2)));
+    // for (Node p : pondPane) {
+    // if (p instanceof Pond) {
+    // if (getBoundsInParent().intersects(((Pond)
+    // p).getFillBounds().getBoundsInParent())) {
+    // int dist2 = (int) (Math
+    // .sqrt(Math.pow(((Pond) p).getCenter().getX() -
+    // getBoundsInParent().getCenterX(), 2))
+    // + Math.sqrt(Math.pow(((Pond) p).getCenter().getY() -
+    // getBoundsInParent().getCenterY(), 2)));
 
-                    if (dist1 > dist2) {
-                        min.setDistanceLineColor(Color.AZURE);
-                        min = ((Pond) p);
-                        min.setDistanceLineColor(CLOSEST_POND_DISTANCE_COLOR);
-                    }
-                }
-            }
-        }
-        return min;
-    }
+    // if (dist1 > dist2) {
+    // min.setDistanceLineColor(Color.AZURE);
+    // min = ((Pond) p);
+    // min.setDistanceLineColor(CLOSEST_POND_DISTANCE_COLOR);
+    // }
+    // }
+    // }
+    // }
+    // return min;
+    // }
 
     @Override
     public void update() {
@@ -94,10 +107,6 @@ public class Cloud extends TransientGameObject implements Updateable {
         updateLabel(percentage);
     }
 
-    public double getPercentageToPond() {
-        return getBoundsInLocal().getCenterX() / min.getFillBounds().getBoundsInLocal().getWidth();
-    }
-
     private void updateLabel(double val) {
         cloudLabel.updateLabel(String.format(LABEL_FORMAT, val));
     }
@@ -108,6 +117,83 @@ public class Cloud extends TransientGameObject implements Updateable {
 
     public double getRand() {
         return rand;
+    }
+
+    public void findClosestPond(Ponds pondPane) {
+        for (Node p : pondPane) {
+            if (p instanceof Pond) {
+                if (((Pond) p).getFillBounds().getBoundsInLocal().intersects(getBoundsInParent())) {
+                    addToClosestPonds(((Pond) p));
+                } else {
+                    removeFromClosestPonds(((Pond) p));
+                }
+            }
+        }
+    }
+
+    public void addToClosestPonds(Pond p) {
+        if (!closest.contains(p))
+            closest.add(p);
+        if (farthest.contains(p)) {
+            farthest.remove(p);
+        }
+    }
+
+    public void removeFromClosestPonds(Pond p) {
+        if (!farthest.contains(p))
+            farthest.add(p);
+        if (closest.contains(p)) {
+            closest.remove(p);
+        }
+    }
+
+    public Group createDistanceLines() {
+        Group distanceLines = new Group();
+
+        for (Pond p : farthest) {
+            Line lineTo = new Line(p.getCenter().getX(), p.getCenter().getY(), getBoundsInParent().getCenterX(),
+                    getBoundsInParent().getCenterY());
+            lineTo.setStroke(FARTHEST_POND_DISTANCE_COLOR);
+            lineTo.setStrokeWidth(1);
+            distanceLines.getChildren().addAll(lineTo, createDistanceValueLabel(((Pond) p), lineTo));
+        }
+
+        for (Pond p : closest) {
+            Line lineTo = new Line(p.getCenter().getX(), p.getCenter().getY(), getBoundsInParent().getCenterX(),
+                    getBoundsInParent().getCenterY());
+            lineTo.setStroke(CLOSEST_POND_DISTANCE_COLOR);
+            lineTo.setStrokeWidth(1);
+
+            distanceLines.getChildren().addAll(lineTo, createDistanceValueLabel(((Pond) p), lineTo));
+
+        }
+
+        return distanceLines;
+    }
+
+    private GameText createDistanceValueLabel(Pond p, Line lineTo) {
+        int distanceValue = (int) Math.sqrt(Math
+                .pow(getBoundsInParent().getCenterX() - p.getBoundsInLocal().getCenterX(), 2)
+                + (Math.pow(
+                        getBoundsInParent().getCenterY() - p.getBoundsInLocal().getCenterY(),
+                        2)));
+
+        GameText g = new GameText(Integer.toString(distanceValue),
+                new Point2D(lineTo.getStartX() + (lineTo.getEndX() - lineTo.getStartX()) / 2,
+                        lineTo.getStartY() + (lineTo.getEndY() - lineTo.getStartY()) / 2),
+                Color.RED);
+
+        if (distanceToPond.containsKey(p))
+            distanceToPond.replace(p, distanceValue);
+        else
+            distanceToPond.put(p, distanceValue);
+        return g;
+    }
+
+    public void updateClosestPonds() {
+        for (Pond p : closest) {
+            p.update(BASELINE_OFFSET_SAME_AS_HEIGHT);
+        }
     }
 
 }

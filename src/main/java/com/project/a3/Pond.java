@@ -3,6 +3,7 @@ package com.project.a3;
 import java.util.concurrent.ThreadLocalRandom;
 
 import javafx.geometry.Point2D;
+import javafx.scene.Node;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
@@ -12,7 +13,6 @@ public class Pond extends GameObject {
     private static final double PERCENT_VALUE = 0.01;
     private static final String LABEL_FORMAT = "%.0f%%";
     private static final int FILL_DISTANCE = 4;
-    private static final Color DISTANCE_LINE_COLOR = Color.AZURE;
 
     private BezierOval circle;
     private GameText pondLabel;
@@ -20,7 +20,6 @@ public class Pond extends GameObject {
     private double currentRadius, maxRadius, percentAdder, currentArea,
             maxArea;
     private Rectangle fillBounds;
-    private Color lineColor = DISTANCE_LINE_COLOR;
 
     Pond(Point2D s, double radius) {
         double rand = ThreadLocalRandom.current().nextDouble(1, radius + 1);
@@ -83,11 +82,4 @@ public class Pond extends GameObject {
         return (currentArea / maxArea) * 100;
     }
 
-    public void setDistanceLineColor(Color closestPondDistanceColor) {
-        lineColor = closestPondDistanceColor;
-    }
-
-    public Color getDistanceLineColor() {
-        return lineColor;
-    }
 }

@@ -55,28 +55,4 @@ public abstract class GameObject extends Group {
             isBoundOn = false;
         }
     }
-
-    public Group createDistanceLine(Object lineTo, Color color) {
-        Group distanceGroup = new Group();
-
-        if (lineTo instanceof GameObject) {
-            Line distanceLine = new Line(getBoundsInParent().getCenterX(),
-                    getBoundsInParent().getCenterY(),
-                    ((GameObject) lineTo).getBoundsInLocal().getCenterX(),
-                    ((GameObject) lineTo).getBoundsInLocal().getCenterY());
-            distanceLine.setStroke(color);
-            int distanceValue = (int) Math.sqrt(Math
-                    .pow(getBoundsInParent().getCenterX() - ((GameObject) lineTo).getBoundsInLocal().getCenterX(), 2)
-                    + (Math.pow(
-                            getBoundsInParent().getCenterY() - ((GameObject) lineTo).getBoundsInLocal().getCenterY(),
-                            2)));
-
-            GameText g = new GameText(Integer.toString(distanceValue),
-                    new Point2D(distanceLine.getStartX() + (distanceLine.getEndX() - distanceLine.getStartX()) / 2,
-                            distanceLine.getStartY() + (distanceLine.getEndY() - distanceLine.getStartY()) / 2),
-                    Color.RED);
-            distanceGroup.getChildren().addAll(distanceLine, g);
-        }
-        return distanceGroup;
-    }
 }
