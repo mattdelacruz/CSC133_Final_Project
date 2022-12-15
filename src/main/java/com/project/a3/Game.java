@@ -59,11 +59,9 @@ public class Game extends Pane implements Updateable {
     private GameBackground background = new GameBackground();
     private Group distanceLines = new Group();
     private Rectangle bounds = new Rectangle(GAME_WIDTH + (CLOUD_SIZE * 2), 0, 1, GAME_HEIGHT);
-    private Pond closest = null;
-
-    boolean isBoundsOn = false;
-    boolean isDistanceLinesOn = false;
-    private int score = 0;
+    private boolean isBoundsOn = false;
+    private boolean isDistanceLinesOn = false;
+    private double score = 0;
 
     public Game() {
         init();
@@ -75,8 +73,8 @@ public class Game extends Pane implements Updateable {
             @Override
             public void handle(long now) {
                 update();
-                checkCloudOutOfBounds();
-                checkBlimpOutOfBounds();
+                cloudPane.checkOutOfBounds(bounds.getBoundsInLocal().getMinX());
+                blimpPane.checkOutOfBounds(bounds.getBoundsInLocal().getMinX());
                 checkCloudsOnScreen();
                 checkBlimpsOnScreen();
                 decreaseClouds(now);
@@ -101,24 +99,6 @@ public class Game extends Pane implements Updateable {
             }
 
             private void updateClosestPond(long now) {
-                // for (Node c : cloudPane) {
-                // if (c instanceof Cloud) {
-                // if (((Cloud) c).getState().equals(((Cloud) c).getInPlayState())) {
-                // for (Node p : pondPane) {
-                // if (p instanceof Pond) {
-                // closest = ((Cloud) c).findClosestPond(pondPane);
-
-                // distanceLines.getChildren().add(((Cloud) c).createDistanceLine(((Pond) p),
-                // ((Pond) p).getDistanceLineColor()));
-                // if (((Cloud) c).getPercentage() > PERCENT_THRESHOLD &&
-                // now % POND_UPDATE_TIME == 0) {
-                // closest.update(((Cloud) c).getPercentageToPond());
-                // }
-                // }
-                // }
-                // }
-                // }
-                // }
                 distanceLines.getChildren().clear();
                 for (Node c : cloudPane) {
                     if (c instanceof Cloud) {
@@ -130,7 +110,6 @@ public class Game extends Pane implements Updateable {
                     if (c instanceof Cloud) {
                         if (((Cloud) c).getState().equals(((Cloud) c).getInPlayState())) {
                             distanceLines.getChildren().add(((Cloud) c).createDistanceLines());
-
                             if (((Cloud) c).getPercentage() > PERCENT_THRESHOLD && now % POND_UPDATE_TIME == 0) {
                                 ((Cloud) c).updateClosestPonds();
                             }
@@ -146,7 +125,7 @@ public class Game extends Pane implements Updateable {
             // blimpSoundPlayer = new MediaPlayer(blimpDroneMedia);
             // blimpSoundPlayer.setCycleCount(MediaPlayer.INDEFINITE);
             // blimpSoundPlayer.setVolume(0);
-            // blimpSoundPLayer.play();
+            // blimpSoundPlayer.play();
             private void resetDistanceLines() {
                 distanceLines.getChildren().clear();
 
@@ -176,36 +155,6 @@ public class Game extends Pane implements Updateable {
                 if (blimpPane.size() == 3 || blimpPane.size() == 4 &&
                         dice == 1) {
                     createBlimp();
-                }
-            }
-
-            private void checkCloudOutOfBounds() {
-                ArrayList<Cloud> toRemove = new ArrayList<Cloud>();
-                for (Node c : cloudPane) {
-                    if (c instanceof Cloud) {
-                        if (c.getBoundsInParent().intersects(bounds.getBoundsInLocal())) {
-                            ((Cloud) c).setState(new DeadWindState());
-                            toRemove.add((Cloud) c);
-                        }
-                    }
-                }
-                for (Cloud c : toRemove) {
-                    cloudPane.remove(c);
-                }
-            }
-
-            private void checkBlimpOutOfBounds() {
-                ArrayList<Blimp> toRemove = new ArrayList<Blimp>();
-                for (Node b : blimpPane) {
-                    if (b instanceof Blimp) {
-                        if (b.getBoundsInParent().intersects(bounds.getBoundsInLocal())) {
-                            ((Blimp) b).setState(new DeadWindState());
-                            toRemove.add((Blimp) b);
-                        }
-                    }
-                }
-                for (Blimp b : toRemove) {
-                    blimpPane.remove(b);
                 }
             }
         };
@@ -254,7 +203,7 @@ public class Game extends Pane implements Updateable {
 
     private boolean checkIfLose() {
         if (heli.getFuel() == 0) {
-            createDialogBox(LOSE_TEXT);
+            createDialogBox(LOSE_TEXT, String.format("%.0f", score));
             return true;
         }
         return false;
@@ -276,15 +225,16 @@ public class Game extends Pane implements Updateable {
         }
 
         if (heli.getFuel() > 0 && heli.getBoundsInParent().intersects(helipad.getBoundsInParent())
-                && !heli.getState().isIgnitionOn()) {
-            score = (int) (currentCapacity / maxCapacity) * heli.getFuel();
-            createDialogBox(WIN_TEXT);
+                && !heli.getState().isIgnitionOn() && heli.getSpinSpeed() == 0) {
+            score = (currentCapacity / maxCapacity) * heli.getFuel();
+            System.out.println(score);
+            createDialogBox(WIN_TEXT, String.format("%.0f", score));
             return true;
         }
         return false;
     }
 
-    private void createDialogBox(String s) {
+    private void createDialogBox(String s, String score) {
         alert = new Alert(AlertType.CONFIRMATION);
         alert.getButtonTypes().clear();
         alert.getButtonTypes().addAll(Yes, No);
