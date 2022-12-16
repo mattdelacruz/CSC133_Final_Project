@@ -7,7 +7,6 @@ import java.util.TimerTask;
 import java.util.concurrent.ThreadLocalRandom;
 
 import javafx.animation.AnimationTimer;
-import javafx.animation.PauseTransition;
 import javafx.application.Platform;
 import javafx.geometry.Point2D;
 import javafx.scene.Group;
@@ -22,7 +21,9 @@ import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.transform.Scale;
-import javafx.util.Duration;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
+import java.io.File;
 
 public class Game extends Pane implements Updateable {
     public static final int GAME_WIDTH = 800;
@@ -47,7 +48,8 @@ public class Game extends Pane implements Updateable {
     private static final Scale SCALE = new Scale(1, -1);
     private static final String LOSE_TEXT = "You have lost! Play again?";
     private static final String WIN_TEXT = "You have won! Play again?";
-
+    File file = new File("file:///helicopter-drone.mp3");
+    private final Media HELICOPTER_DRONE_MEDIA = new Media(file.toURI().toString());
     private Helicopter heli;
     private Helipad helipad;
     private Ponds pondPane = new Ponds();
@@ -59,6 +61,7 @@ public class Game extends Pane implements Updateable {
     private GameBackground background = new GameBackground();
     private Group distanceLines = new Group();
     private Rectangle bounds = new Rectangle(GAME_WIDTH + (CLOUD_SIZE * 2), 0, 1, GAME_HEIGHT);
+    MediaPlayer helicopterSoundPlayer;
     private boolean isBoundsOn = false;
     private boolean isDistanceLinesOn = false;
     private double score = 0;
@@ -118,14 +121,6 @@ public class Game extends Pane implements Updateable {
                 }
             }
 
-            // loading a sound file
-            //
-            // private static final Media blimpDroneMedia = new
-            // Media(SoundPlayer.class.getResource("resources/AirshipDrone.mp3").toExternalForm());
-            // blimpSoundPlayer = new MediaPlayer(blimpDroneMedia);
-            // blimpSoundPlayer.setCycleCount(MediaPlayer.INDEFINITE);
-            // blimpSoundPlayer.setVolume(0);
-            // blimpSoundPlayer.play();
             private void resetDistanceLines() {
                 distanceLines.getChildren().clear();
 
@@ -167,6 +162,7 @@ public class Game extends Pane implements Updateable {
 
     private void setUpUI() {
         createGameObjects();
+        createSound();
         SCALE.setPivotY(GAME_HEIGHT / 2);
         getTransforms().add(SCALE);
         getChildren().addAll(background, helipad, pondPane,
@@ -187,6 +183,13 @@ public class Game extends Pane implements Updateable {
         for (int i = 0; i < BLIMP_SPAWN; i++) {
             createBlimp();
         }
+    }
+
+    private void createSound() {
+        helicopterSoundPlayer = new MediaPlayer(HELICOPTER_DRONE_MEDIA);
+        helicopterSoundPlayer.setCycleCount(MediaPlayer.INDEFINITE);
+        helicopterSoundPlayer.setVolume(1);
+
     }
 
     private void getEndResult() {
@@ -414,8 +417,11 @@ public class Game extends Pane implements Updateable {
         pondPane.updateBoundingBox();
         cloudPane.updateBoundingBox();
         blimpPane.updateBoundingBox();
+
         if (heli.isIgnitionOn()) {
             heli.consumeFuel();
+            helicopterSoundPlayer.play();
+
         }
         cloudPane.move();
         blimpPane.move();
