@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import javafx.animation.PauseTransition;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyCode;
 import javafx.stage.Stage;
@@ -43,6 +44,7 @@ public class GameApp extends Application {
                 root.handleSeeding();
                 pause.setOnFinished(event -> {
                     root.handleRefueling();
+
                 });
                 pause.play();
 

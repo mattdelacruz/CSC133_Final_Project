@@ -6,4 +6,5 @@ module rainmaker {
     opens rainmaker to javafx.fxml;
 
     exports rainmaker;
+
 }
