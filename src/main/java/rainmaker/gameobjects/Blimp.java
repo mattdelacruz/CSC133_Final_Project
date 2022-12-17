@@ -9,24 +9,29 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.CubicCurve;
 import javafx.scene.shape.Ellipse;
 import rainmaker.AliveWindState;
+import rainmaker.SoundPlayer;
 
 public class Blimp extends TransientGameObject {
     private static final int CURVE_DISTANCE = 10;
     private static final Color BLIMP_STROKE = Color.RED;
     private static final Color BLIMP_FILL = Color.rgb(0, 0, 0, 0.5);
     private static final Color FONT_COLOR = Color.LEMONCHIFFON;
-    private static final int MIN_FUEL = 5000;
-    private static final int MAX_FUEL = 10000;
+    private static final int MIN_FUEL = 5;
+    private static final int MAX_FUEL = 10;
+    private static final int FUEL_FACTOR = 1000;
+    private static final double BLIMP_VOLUME = 0.1;
 
     private Group bezierCurves = new Group();
     private Ellipse ellipse;
     private GameText fuelLabel;
+    private SoundPlayer blimpSound;
     private double rand = ThreadLocalRandom.current().nextDouble(0.5, 2);
     private int fuel;
     private double speed;
 
     public Blimp(Point2D pos, Point2D radius) {
         fuel = ThreadLocalRandom.current().nextInt(MIN_FUEL, MAX_FUEL);
+        fuel *= FUEL_FACTOR;
         ellipse = new Ellipse(pos.getX(), pos.getY(), radius.getX(), radius.getY());
         fuelLabel = createLabel(Integer.toString(fuel),
                 new Point2D(ellipse.getCenterX() - (GameText.FONT_SIZE / 2),
@@ -34,11 +39,16 @@ public class Blimp extends TransientGameObject {
                 FONT_COLOR);
         ellipse.setFill(BLIMP_FILL);
         ellipse.setStroke(BLIMP_STROKE);
+        createSounds();
         createCurveGroup(CURVE_DISTANCE);
         createCurveGroup(-CURVE_DISTANCE);
         setState(new AliveWindState());
         getChildren().addAll(ellipse, bezierCurves, fuelLabel);
+    }
 
+    private void createSounds() {
+        blimpSound = new SoundPlayer(getClass().getResource("/blimp-sound.mp3").toExternalForm(), 1);
+        blimpSound.setVolume(BLIMP_VOLUME);
     }
 
     private void updateLabel(int val) {
@@ -95,5 +105,13 @@ public class Blimp extends TransientGameObject {
         c.setStroke(BLIMP_STROKE);
         c.setFill(Color.TRANSPARENT);
         return c;
+    }
+
+    public void play() {
+        blimpSound.play();
+    }
+
+    public void stop() {
+        blimpSound.stop();
     }
 }

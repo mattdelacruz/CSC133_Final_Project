@@ -11,7 +11,7 @@ import rainmaker.SoundPlayer;
 
 public class Helicopter extends GameObject {
     private static final int ROTATION_ANGLE = 15;
-    private static final int FUEL_CONSUMPTION = 1;
+    private static final int FUEL_CONSUMPTION = 10;
     public static final int MAX_SPEED = 10;
     public static final int MIN_SPEED = -2;
     private static final int LABEL_GAP = 15;
@@ -52,6 +52,7 @@ public class Helicopter extends GameObject {
                 1);
         flyingSound = new SoundPlayer(getClass().getResource("/helicopter-flying.mp3").toExternalForm(),
                 MediaPlayer.INDEFINITE);
+        flyingSound.setVolume(0.2);
     }
 
     public void stopAllSounds() {

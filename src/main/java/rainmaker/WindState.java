@@ -9,4 +9,6 @@ public interface WindState {
     public void addToWind(GameObject c, Wind w);
 
     public void removeFromWind(GameObject c, Wind w);
+
+    public void playSound(GameObject c);
 }

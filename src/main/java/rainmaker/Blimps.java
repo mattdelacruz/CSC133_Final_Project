@@ -30,4 +30,21 @@ public class Blimps extends GameObjectPane<Blimp> implements Iterable<Node> {
         return getChildren().size();
     }
 
+    public void playSounds() {
+        for (Node b : getChildren()) {
+            if (b instanceof Blimp) {
+                ((Blimp) b).getState().playSound((Blimp) b);
+            }
+
+        }
+    }
+
+    public void stopAllSounds() {
+        for (Node b : getChildren()) {
+            if (b instanceof Blimp) {
+                ((Blimp) b).stop();
+            }
+        }
+    }
+
 }

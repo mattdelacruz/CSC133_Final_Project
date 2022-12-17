@@ -19,4 +19,9 @@ public class AliveWindState implements WindState {
     public void removeFromWind(GameObject c, Wind w) {
         return;
     }
+
+    @Override
+    public void playSound(GameObject c) {
+        return;
+    }
 }
