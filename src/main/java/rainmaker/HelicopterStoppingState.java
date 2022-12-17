@@ -14,7 +14,7 @@ public class HelicopterStoppingState implements HelicopterState {
         if (heli.getSpinSpeed() > 0) {
             heli.setSpinSpeed(heli.getSpinSpeed() - 0.1);
         } else {
-            heli.setState(new HelicopterOffState());
+            heli.setState(heli.getOffState());
             heli.setSpinSpeed(0);
         }
     }
@@ -33,5 +33,12 @@ public class HelicopterStoppingState implements HelicopterState {
     @Override
     public void decreaseSpeed(Helicopter heli) {
         return;
+    }
+
+    @Override
+    public void playSound(Helicopter heli) {
+        heli.getFlyingSound().stop();
+        heli.getStartUpSound().stop();
+        heli.getShutDownSound().play();
     }
 }

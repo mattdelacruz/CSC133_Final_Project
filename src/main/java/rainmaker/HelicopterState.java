@@ -14,4 +14,6 @@ public interface HelicopterState {
 
     public void decreaseSpeed(Helicopter heli);
 
+    public void playSound(Helicopter heli);
+
 }

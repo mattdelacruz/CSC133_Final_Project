@@ -1,15 +1,14 @@
 package rainmaker;
 
-import java.io.IOException;
-
 import javafx.animation.PauseTransition;
 import javafx.application.Application;
-import javafx.application.Platform;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyCode;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import rainmaker.gameobjects.Game;
+
+import java.io.IOException;
 
 public class GameApp extends Application {
 
@@ -18,9 +17,9 @@ public class GameApp extends Application {
     @Override
     public void start(Stage stage) throws IOException {
 
-        Game root = new Game();
+        Game root = Game.getInstance();
         PauseTransition pause = new PauseTransition(Duration.seconds(0.5));
-        scene = new Scene(root, Game.GAME_WIDTH, Game.GAME_HEIGHT);
+        scene = new Scene(root, root.GAME_WIDTH, root.GAME_HEIGHT);
 
         stage.setScene(scene);
         scene.setOnKeyPressed(e -> {
@@ -44,7 +43,6 @@ public class GameApp extends Application {
                 root.handleSeeding();
                 pause.setOnFinished(event -> {
                     root.handleRefueling();
-
                 });
                 pause.play();
 

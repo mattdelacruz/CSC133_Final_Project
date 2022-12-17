@@ -170,7 +170,6 @@ public class Cloud extends TransientGameObject implements Updateable {
         for (Pond p : closest) {
             p.update(Math.abs(p.getBoundsInLocal().getCenterX() - distanceToPond.get(p))
                     / p.getBoundsInLocal().getMinX());
-
         }
     }
 

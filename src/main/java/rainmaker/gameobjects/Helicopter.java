@@ -1,10 +1,13 @@
 package rainmaker.gameobjects;
 
 import javafx.geometry.Point2D;
+import javafx.scene.media.MediaPlayer;
 import javafx.scene.paint.Color;
 import javafx.scene.transform.Rotate;
 import rainmaker.HelicopterOffState;
 import rainmaker.HelicopterState;
+import rainmaker.HelicopterStoppingState;
+import rainmaker.SoundPlayer;
 
 public class Helicopter extends GameObject {
     private static final int ROTATION_ANGLE = 15;
@@ -20,6 +23,9 @@ public class Helicopter extends GameObject {
     private HeloBlade heloBlade;
     private GameText fuelLabel;
     private HelicopterState state = new HelicopterOffState();
+    private HelicopterState stopping = new HelicopterStoppingState();
+    private HelicopterState off = new HelicopterOffState();
+    private SoundPlayer startingUpSound, shutDownSound, flyingSound;
     private double speed = 0;
     private double spinSpeed = 0;
     private int fuelValue = 0;
@@ -35,7 +41,39 @@ public class Helicopter extends GameObject {
                         heloBody.getBoundsInParent().getMinY() -
                                 LABEL_GAP),
                 Color.MAGENTA);
+        createSounds();
         getChildren().addAll(heloBody, heloBlade, fuelLabel);
+    }
+
+    private void createSounds() {
+        startingUpSound = new SoundPlayer(getClass().getResource(
+                "/helicopter-starting-up.mp3").toExternalForm(), MediaPlayer.INDEFINITE);
+        shutDownSound = new SoundPlayer(getClass().getResource("/helicopter-shut-off.mp3").toExternalForm(),
+                1);
+        flyingSound = new SoundPlayer(getClass().getResource("/helicopter-flying.mp3").toExternalForm(),
+                MediaPlayer.INDEFINITE);
+    }
+
+    public void stopAllSounds() {
+        startingUpSound.stop();
+        shutDownSound.stop();
+        flyingSound.stop();
+    }
+
+    public SoundPlayer getStartUpSound() {
+        return startingUpSound;
+    }
+
+    public SoundPlayer getShutDownSound() {
+        return shutDownSound;
+    }
+
+    public SoundPlayer getFlyingSound() {
+        return flyingSound;
+    }
+
+    public void playSound() {
+        getState().playSound(this);
     }
 
     public void consumeFuel() {
@@ -115,6 +153,14 @@ public class Helicopter extends GameObject {
 
     public void setFuel(int f) {
         fuelValue = f;
+    }
+
+    public HelicopterState getStoppingState() {
+        return stopping;
+    }
+
+    public HelicopterState getOffState() {
+        return off;
     }
 
 }

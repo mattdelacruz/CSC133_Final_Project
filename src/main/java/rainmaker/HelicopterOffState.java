@@ -27,6 +27,11 @@ public class HelicopterOffState implements HelicopterState {
     @Override
     public void decreaseSpeed(Helicopter heli) {
         return;
-
     }
+
+    @Override
+    public void playSound(Helicopter heli) {
+        heli.getShutDownSound().stop();
+    }
+
 }

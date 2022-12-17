@@ -1,29 +1,31 @@
 package rainmaker.gameobjects;
 
-import java.util.Optional;
-import java.util.concurrent.ThreadLocalRandom;
-
 import javafx.animation.AnimationTimer;
 import javafx.application.Platform;
 import javafx.geometry.Point2D;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.control.Alert;
-import javafx.scene.control.ButtonType;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonBar.ButtonData;
+import javafx.scene.control.ButtonType;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.Pane;
+import javafx.scene.media.AudioClip;
+import javafx.scene.media.MediaPlayer;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.transform.Scale;
+import rainmaker.AudioClipPlayer;
 import rainmaker.Blimps;
 import rainmaker.Clouds;
 import rainmaker.Ponds;
+import rainmaker.SoundPlayer;
 import rainmaker.Updateable;
-import javafx.scene.media.Media;
-import javafx.scene.media.MediaPlayer;
+
+import java.util.Optional;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class Game extends Pane implements Updateable {
     public static final int GAME_WIDTH = 800;
@@ -48,8 +50,7 @@ public class Game extends Pane implements Updateable {
     private static final Scale SCALE = new Scale(1, -1);
     private static final String LOSE_TEXT = "You have lost! Play again?";
     private static final String WIN_TEXT = "You have won! Play again?";
-    // private final Media HELICOPTER_DRONE_MEDIA = new Media(
-    // this.getClass().getResource("file:///resources/helicopter-drone.mp3").toExternalForm());
+
     private Helicopter heli;
     private Helipad helipad;
     private Ponds pondPane = new Ponds();
@@ -61,7 +62,9 @@ public class Game extends Pane implements Updateable {
     private GameBackground background = new GameBackground();
     private Group distanceLines = new Group();
     private Rectangle bounds = new Rectangle(GAME_WIDTH + (CLOUD_SIZE * 2), 0, 1, GAME_HEIGHT);
-    MediaPlayer helicopterSoundPlayer;
+    private AudioClipPlayer seedingSound, refuelingSound;
+    private SoundPlayer backgroundSound;
+    private static Game game_instance = null;
     private boolean isBoundsOn = false;
     private boolean isDistanceLinesOn = false;
     private double score = 0;
@@ -69,6 +72,13 @@ public class Game extends Pane implements Updateable {
     public Game() {
         init();
         startAnimation();
+    }
+
+    public static Game getInstance() {
+        if (game_instance == null) {
+            game_instance = new Game();
+        }
+        return game_instance;
     }
 
     private void startAnimation() {
@@ -160,9 +170,19 @@ public class Game extends Pane implements Updateable {
         setUpUI();
     }
 
+    public void createSounds() {
+        seedingSound = new AudioClipPlayer(getClass().getResource("/cloud-seeding.mp3").toExternalForm());
+        refuelingSound = new AudioClipPlayer(getClass().getResource("/blimp-refueling.mp3").toExternalForm());
+        refuelingSound.setVolume(0.5);
+        backgroundSound = new SoundPlayer(getClass().getResource("/background-ambience.mp3").toExternalForm(),
+                MediaPlayer.INDEFINITE);
+        backgroundSound.setVolume(0.2);
+    }
+
     private void setUpUI() {
         createGameObjects();
-        // createSound();
+        createSounds();
+        backgroundSound.play();
         SCALE.setPivotY(GAME_HEIGHT / 2);
         getTransforms().add(SCALE);
         getChildren().addAll(background, helipad, pondPane,
@@ -183,13 +203,6 @@ public class Game extends Pane implements Updateable {
         for (int i = 0; i < BLIMP_SPAWN; i++) {
             createBlimp();
         }
-    }
-
-    private void createSound() {
-        // helicopterSoundPlayer = new MediaPlayer(HELICOPTER_DRONE_MEDIA);
-        // helicopterSoundPlayer.setCycleCount(MediaPlayer.INDEFINITE);
-        // helicopterSoundPlayer.setVolume(1);
-
     }
 
     private void getEndResult() {
@@ -354,6 +367,7 @@ public class Game extends Pane implements Updateable {
             if (c instanceof Cloud) {
                 if (heli.getBoundsInParent().intersects(c.getBoundsInParent()) && heli.getState().isIgnitionOn()) {
                     ((Cloud) c).update();
+                    seedingSound.play();
                 }
             }
         }
@@ -367,6 +381,7 @@ public class Game extends Pane implements Updateable {
                         && ((Blimp) b).getFuel() > 0
                         && heli.getSpeed() >= ((Blimp) b).getSpeed() - BLIMP_SPEED_RANGE
                         && heli.getSpeed() <= ((Blimp) b).getSpeed() + BLIMP_SPEED_RANGE) {
+                    refuelingSound.play();
                     if (((Blimp) b).getFuel() < REFUEL_VALUE) {
                         heli.setFuel(heli.getFuel() + ((Blimp) b).getFuel());
                         ((Blimp) b).setFuel(
@@ -406,6 +421,10 @@ public class Game extends Pane implements Updateable {
         pondPane.clear();
         cloudPane.clear();
         blimpPane.clear();
+        heli.stopAllSounds();
+        backgroundSound.stop();
+        refuelingSound.stop();
+        seedingSound.stop();
         System.gc();
         init();
     }
@@ -420,9 +439,8 @@ public class Game extends Pane implements Updateable {
 
         if (heli.isIgnitionOn()) {
             heli.consumeFuel();
-            // helicopterSoundPlayer.play();
-
         }
+        heli.playSound();
         cloudPane.move();
         blimpPane.move();
     }

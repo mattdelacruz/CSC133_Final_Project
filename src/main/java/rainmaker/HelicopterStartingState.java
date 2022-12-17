@@ -21,7 +21,7 @@ public class HelicopterStartingState implements HelicopterState {
     @Override
     public void engineStart(Helicopter heli) {
         heli.setSpeed(0);
-        heli.setState(new HelicopterStoppingState());
+        heli.setState(heli.getStoppingState());
     }
 
     @Override
@@ -32,5 +32,10 @@ public class HelicopterStartingState implements HelicopterState {
     @Override
     public void decreaseSpeed(Helicopter heli) {
         return;
+    }
+
+    @Override
+    public void playSound(Helicopter heli) {
+        heli.getStartUpSound().play();
     }
 }

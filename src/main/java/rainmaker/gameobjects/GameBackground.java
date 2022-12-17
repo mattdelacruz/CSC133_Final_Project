@@ -11,7 +11,7 @@ import javafx.scene.transform.Scale;
 
 public class GameBackground extends GameObject {
     private static final Scale SCALE = new Scale(1, -1);
-    private static final String BACKGROUND_SOURCE = "https://live.staticflickr.com/3837/14337947499_b4599f5925_b.jpg";
+    private final String BACKGROUND_SOURCE = getClass().getResource("/rainmaker-background.jpg").toExternalForm();
 
     private BackgroundImage backgroundImage;
     private Pane backgroundPane;
