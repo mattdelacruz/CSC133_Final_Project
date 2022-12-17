@@ -1,0 +1,40 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "java",
+      "name": "Launch GameApp",
+      "request": "launch",
+      "mainClass": "rainmaker/rainmaker.GameApp",
+      "projectName": "project_a3"
+    },
+    {
+      "type": "java",
+      "name": "Launch GameApp",
+      "request": "launch",
+      "mainClass": "com.project.a3/rainmaker.GameApp",
+      "projectName": "project_a3",
+      "noDebug": false,
+      "__progressId": "3a0058c1-3bf5-446a-8995-e1887085b573"
+    },
+    {
+      "name": "C/C++ Runner: Debug Session",
+      "type": "cppdbg",
+      "request": "launch",
+      "args": [],
+      "stopAtEntry": false,
+      "externalConsole": true,
+      "cwd": "c:/Users/Matt/school/fall22/CSC133/project_a3/project_a3/src/main/java/com/project",
+      "program": "c:/Users/Matt/school/fall22/CSC133/project_a3/project_a3/src/main/java/com/project/build/Debug/outDebug",
+      "MIMode": "gdb",
+      "miDebuggerPath": "gdb",
+      "setupCommands": [
+        {
+          "description": "Enable pretty-printing for gdb",
+          "text": "-enable-pretty-printing",
+          "ignoreFailures": true
+        }
+      ]
+    }
+  ]
+}

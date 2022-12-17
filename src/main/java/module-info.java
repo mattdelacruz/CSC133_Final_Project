@@ -1,7 +1,10 @@
-module com.project.a3 {
+module rainmaker {
     requires javafx.controls;
     requires javafx.fxml;
+    requires javafx.media;
 
-    opens com.project.a3 to javafx.fxml;
-    exports com.project.a3;
+    opens rainmaker to javafx.fxml;
+
+    exports rainmaker;
+
 }
