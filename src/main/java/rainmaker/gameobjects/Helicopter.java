@@ -55,6 +55,11 @@ public class Helicopter extends GameObject {
         flyingSound.setVolume(0.2);
     }
 
+    public void clear() {
+        getTransforms().clear();
+        getChildren().clear();
+    }
+
     public void stopAllSounds() {
         startingUpSound.stop();
         shutDownSound.stop();

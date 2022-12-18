@@ -5,6 +5,7 @@ import java.util.concurrent.ThreadLocalRandom;
 import javafx.geometry.Point2D;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
+import rainmaker.AudioClipPlayer;
 
 public class Pond extends GameObject {
     private static final Color POND_COLOR = Color.BLUE;
@@ -12,7 +13,9 @@ public class Pond extends GameObject {
     private static final double PERCENT_VALUE = 0.01;
     private static final String LABEL_FORMAT = "%.0f%%";
     private static final int FILL_DISTANCE = 4;
+    private static final double RAIN_VOLUME = 0.2;
 
+    private AudioClipPlayer rainingSound;
     private BezierOval circle;
     private GameText pondLabel;
     private Point2D pos;
@@ -28,7 +31,13 @@ public class Pond extends GameObject {
         currentArea = Math.PI * Math.pow(currentRadius, 2);
         maxArea = Math.PI * Math.pow(maxRadius, 2);
         percentAdder = (maxArea - currentArea) * PERCENT_VALUE;
+        createSounds();
         createPond();
+    }
+
+    private void createSounds() {
+        rainingSound = new AudioClipPlayer(getClass().getResource("/raining-sound.mp3").toExternalForm());
+        rainingSound.setVolume(RAIN_VOLUME);
     }
 
     public Point2D getCenter() {
@@ -51,6 +60,7 @@ public class Pond extends GameObject {
         if (currentArea < maxArea) {
             getChildren().clear();
             currentArea += (percentAdder * factor);
+            rainingSound.play();
             createPond();
         }
     }

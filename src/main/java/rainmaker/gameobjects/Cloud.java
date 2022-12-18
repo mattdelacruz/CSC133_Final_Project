@@ -20,6 +20,7 @@ public class Cloud extends TransientGameObject implements Updateable {
     private static final double PERCENT_VALUE = 0.01;
     private static final double PERCENT_ADDER = (MAX_COLOR_VALUE -
             MIN_COLOR_VALUE) * PERCENT_VALUE;
+    private static final double SIZE_X_FACTOR = 1.4;
     private static final String LABEL_FORMAT = "%.0f%%";
     private static final Color FONT_COLOR = Color.BLACK;
     private static final Color CLOSEST_POND_DISTANCE_COLOR = Color.DARKVIOLET;
@@ -34,7 +35,7 @@ public class Cloud extends TransientGameObject implements Updateable {
     private double rand = ThreadLocalRandom.current().nextDouble(0.5, 2);
 
     Cloud(Point2D s, double size) {
-        circle = new BezierOval(new Point2D(s.getX(), s.getY()), size * 1.2, size, 0);
+        circle = new BezierOval(new Point2D(s.getX(), s.getY()), size * SIZE_X_FACTOR, size, 0);
         cloudColorValue = 0;
         percentage = cloudColorValue / MAX_COLOR_VALUE;
         percentage *= 100;
@@ -167,6 +168,10 @@ public class Cloud extends TransientGameObject implements Updateable {
     }
 
     public void updateClosestPonds() {
+        if (closest.isEmpty()) {
+            return;
+        }
+
         for (Pond p : closest) {
             p.update(Math.abs(p.getBoundsInLocal().getCenterX() - distanceToPond.get(p))
                     / p.getBoundsInLocal().getMinX());

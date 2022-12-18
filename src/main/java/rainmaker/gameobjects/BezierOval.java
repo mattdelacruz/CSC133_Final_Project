@@ -14,7 +14,7 @@ import javafx.scene.shape.Shape;
 public class BezierOval extends Group {
     private static final int MIN_CURVE_WIDTH = 30;
     private static final int MAX_CURVE_WIDTH = 50;
-    private static final int MIN_CURVE_HEIGHT = 15;
+    private static final int MIN_CURVE_HEIGHT = 20;
     private static final int MAX_CURVE_HEIGHT = 25;
     private Ellipse ellipse;
     private Group cubicCurveGroup;
@@ -47,9 +47,7 @@ public class BezierOval extends Group {
                     Math.cos(Math.toRadians(endAngle));
             cubicCurveEndY = center.getY() + ellipse.getRadiusY() *
                     Math.sin(Math.toRadians(endAngle));
-            if (Math.toRadians(startAngle) == Math.toRadians(180)) {
-
-            } else if (Math.toRadians(startAngle) > Math.toRadians(180)) {
+            if (Math.toRadians(startAngle) > Math.toRadians(180)) {
                 cubicCurveControlY1 = cubicCurveStartY
                         - ThreadLocalRandom.current().nextDouble(MIN_CURVE_HEIGHT, MAX_CURVE_HEIGHT);
 
