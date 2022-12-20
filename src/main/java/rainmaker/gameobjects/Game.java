@@ -12,7 +12,6 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.Pane;
-import javafx.scene.media.AudioClip;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
@@ -47,7 +46,6 @@ public class Game extends Pane implements Updateable {
     private static final double FILL_THRESHOLD = 0.8;
     private static final double REFUEL_VOLUME = 0.5;
     private static final double BACKGROUND_VOLUME = 0.2;
-    private static final double RAIN_VOLUME = 0.3;
     private static final Color HELIPAD_COLOR = Color.RED;
     private static final Color HELI_COLOR = Color.YELLOW;
     private static final Scale SCALE = new Scale(1, -1);
@@ -67,11 +65,12 @@ public class Game extends Pane implements Updateable {
     private GameBackground background = new GameBackground();
     private Group distanceLines = new Group();
     private Rectangle bounds = new Rectangle(GAME_WIDTH + (CLOUD_SIZE * 2), 0, 1, GAME_HEIGHT);
-    private AudioClipPlayer seedingSound, refuelingSound, rainingSound;
+    private AudioClipPlayer seedingSound, refuelingSound;
     private SoundPlayer backgroundSound, endingSound;
     private boolean isBoundsOn = false;
     private boolean isDistanceLinesOn = false;
     private double score = 0;
+    private long minMemory = Runtime.getRuntime().freeMemory();
 
     public Game() {
         init();
@@ -128,7 +127,6 @@ public class Game extends Pane implements Updateable {
                         if (((Cloud) c).getState().equals(((Cloud) c).getInPlayState())) {
                             distanceLines.getChildren().add(((Cloud) c).createDistanceLines());
                             if (((Cloud) c).getPercentage() > PERCENT_THRESHOLD && now % POND_UPDATE_TIME == 0) {
-                                rainingSound.play();
                                 ((Cloud) c).updateClosestPonds();
                             }
                         }
@@ -175,17 +173,6 @@ public class Game extends Pane implements Updateable {
         setUpUI();
     }
 
-    public void createSounds() {
-        seedingSound = new AudioClipPlayer(getClass().getResource("/cloud-seeding.mp3").toExternalForm());
-        refuelingSound = new AudioClipPlayer(getClass().getResource("/blimp-refueling.mp3").toExternalForm());
-        refuelingSound.setVolume(REFUEL_VOLUME);
-        backgroundSound = new SoundPlayer(getClass().getResource("/background-ambience.mp3").toExternalForm(),
-                MediaPlayer.INDEFINITE);
-        backgroundSound.setVolume(BACKGROUND_VOLUME);
-        rainingSound = new AudioClipPlayer(getClass().getResource("/raining-sound.mp3").toExternalForm());
-        rainingSound.setVolume(RAIN_VOLUME);
-    }
-
     private void setUpUI() {
         createGameObjects();
         createSounds();
@@ -194,22 +181,6 @@ public class Game extends Pane implements Updateable {
         getTransforms().add(SCALE);
         getChildren().addAll(background, helipad, pondPane,
                 cloudPane, blimpPane, heli, bounds, distanceLines);
-    }
-
-    private void createGameObjects() {
-        createHelipad();
-        createHelicopter();
-        for (int i = 0; i < POND_SPAWN; i++) {
-            createPond();
-        }
-
-        for (int i = 0; i < CLOUD_SPAWN; i++) {
-            createCloud();
-        }
-
-        for (int i = 0; i < BLIMP_SPAWN; i++) {
-            createBlimp();
-        }
     }
 
     private void getEndResult() {
@@ -231,7 +202,7 @@ public class Game extends Pane implements Updateable {
         if (heli.getFuel() == 0) {
             endingSound = new SoundPlayer(getClass().getResource("/ending-theme-lose.mp3").toExternalForm(), 1);
             endingSound.setVolume(10);
-            createDialogBox(LOSE_TEXT, String.format("%.0f", score));
+            createDialogBox(LOSE_TEXT, Integer.toString(0));
             return true;
         }
         return false;
@@ -260,6 +231,31 @@ public class Game extends Pane implements Updateable {
             return true;
         }
         return false;
+    }
+
+    private void createGameObjects() {
+        createHelipad();
+        createHelicopter();
+        for (int i = 0; i < POND_SPAWN; i++) {
+            createPond();
+        }
+
+        for (int i = 0; i < CLOUD_SPAWN; i++) {
+            createCloud();
+        }
+
+        for (int i = 0; i < BLIMP_SPAWN; i++) {
+            createBlimp();
+        }
+    }
+
+    public void createSounds() {
+        seedingSound = new AudioClipPlayer(getClass().getResource("/cloud-seeding.mp3").toExternalForm());
+        refuelingSound = new AudioClipPlayer(getClass().getResource("/blimp-refueling.mp3").toExternalForm());
+        refuelingSound.setVolume(REFUEL_VOLUME);
+        backgroundSound = new SoundPlayer(getClass().getResource("/background-ambience.mp3").toExternalForm(),
+                MediaPlayer.INDEFINITE);
+        backgroundSound.setVolume(BACKGROUND_VOLUME);
     }
 
     private void createDialogBox(String s, String score) {
@@ -401,12 +397,13 @@ public class Game extends Pane implements Updateable {
                         && ((Blimp) b).getFuel() > 0
                         && heli.getSpeed() >= ((Blimp) b).getSpeed() - BLIMP_SPEED_RANGE
                         && heli.getSpeed() <= ((Blimp) b).getSpeed() + BLIMP_SPEED_RANGE) {
-                    refuelingSound.play();
                     if (((Blimp) b).getFuel() < REFUEL_VALUE) {
+                        refuelingSound.play();
                         heli.setFuel(heli.getFuel() + ((Blimp) b).getFuel());
                         ((Blimp) b).setFuel(
                                 ((Blimp) b).getFuel() - ((Blimp) b).getFuel());
                     } else {
+                        refuelingSound.play();
                         ((Blimp) b)
                                 .setFuel(((Blimp) b).getFuel() - REFUEL_VALUE);
                         heli.setFuel(heli.getFuel() + REFUEL_VALUE);
@@ -437,12 +434,13 @@ public class Game extends Pane implements Updateable {
         handleBoundBoxes();
         stopAllSounds();
         isBoundsOn = false;
+        heli.clear();
         getChildren().clear();
         getTransforms().clear();
         pondPane.clear();
         cloudPane.clear();
         blimpPane.clear();
-        System.gc();
+        Runtime.getRuntime().gc();
         init();
     }
 

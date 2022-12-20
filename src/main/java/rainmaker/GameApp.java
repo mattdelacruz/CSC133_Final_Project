@@ -19,7 +19,7 @@ public class GameApp extends Application {
 
         Game root = Game.getInstance();
         PauseTransition pause = new PauseTransition(Duration.seconds(0.5));
-        scene = new Scene(root, root.GAME_WIDTH, root.GAME_HEIGHT);
+        scene = new Scene(root, Game.GAME_WIDTH, Game.GAME_HEIGHT);
 
         stage.setScene(scene);
         scene.setOnKeyPressed(e -> {
