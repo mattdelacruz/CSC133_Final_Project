@@ -70,7 +70,6 @@ public class Game extends Pane implements Updateable {
     private boolean isBoundsOn = false;
     private boolean isDistanceLinesOn = false;
     private double score = 0;
-    private long minMemory = Runtime.getRuntime().freeMemory();
 
     public Game() {
         init();
