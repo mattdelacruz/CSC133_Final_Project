@@ -1,7 +1,7 @@
 # CSC 133 Final Project---RainMaker
- _This was a half-semester long project that demonstrated the application of object oriented principles and design by developing a small game that showed understanding of these methods using JavaFX_
+ _This was a half-semester long project that demonstrated the application of object-oriented principles and design by developing a small game that showed understanding of these methods using JavaFX_
 
-## Key Features
+## Key features
 - Application of a state design pattern to determine what actions needed to be ran based on the "state" of the object.
 - Application of an observer pattern to determine which objects would have access to the wind, thus allowing these objects to move across the window.
 - The use of JavaFX shapes to design a helicopter, cloud, pond, and blimp programmatically.
